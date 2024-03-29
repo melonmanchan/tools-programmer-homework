@@ -48,10 +48,14 @@ fn disassemble(data: Vec<u8>) -> Output {
 
     let mut pc = 0;
     let end = data.len();
-    let map = opcode::create_instruction_map();
+    let map = opcode::INSTRUCTION_MAP.clone();
 
     while pc < end {
         println!("{:02x}", data[pc]);
+
+        if let Some(opcode) = map.get(&data[pc]) {
+            println!("{:?}", opcode.instructions);
+        }
         pc += 1;
     }
 
