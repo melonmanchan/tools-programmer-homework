@@ -1,4 +1,3 @@
-
 use axum::{
     response::{IntoResponse, Response},
     routing::post,
@@ -6,8 +5,9 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
-use std::ops::Add;
 use tracing::info;
+
+mod opcode;
 
 #[tokio::main]
 async fn main() {
@@ -35,19 +35,33 @@ struct Output {
 
 async fn handler(Json(payload): Json<Payload>) -> Response {
     let Payload { data } = payload;
+
     let res = disassemble(data);
+
     Json(res).into_response()
 }
 
-fn disassemble(_data: Vec<u8>) -> Output {
+fn disassemble(data: Vec<u8>) -> Output {
     // process the incoming data here and return type Output
+
+    // loop over vector
+
+    let mut pc = 0;
+    let end = data.len();
+    let map = opcode::create_instruction_map();
+
+    while pc < end {
+        println!("{:02x}", data[pc]);
+        pc += 1;
+    }
+
+    println!("pc: {}", pc);
 
     Output {
         disassembly: [
-
-            "0x0000 a9 bd        LDA #$bd", 
-            "0x0002 a0 bd        LDY #$bd", 
-            "0x0004 20 28 ba     JSR $ba28"
+            "0x0000 a9 bd        LDA #$bd",
+            "0x0002 a0 bd        LDY #$bd",
+            "0x0004 20 28 ba     JSR $ba28",
         ]
         .iter()
         .map(|&s| s.into())
@@ -81,7 +95,7 @@ mod tests {
             disassembly: [
                 "0x0000 a9 bd        LDA #$bd",
                 "0x0002 a0 bd        LDY #$bd",
-                "0x0004 20 28 ba     JSR $ba28"
+                "0x0004 20 28 ba     JSR $ba28",
             ]
             .iter()
             .map(|&s| s.into())
