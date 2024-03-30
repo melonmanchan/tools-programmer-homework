@@ -1,463 +1,463 @@
 {
   "10": {
-    "ins": "bpl $hh",
+    "ins": "BPL $hh",
     "rel": 1
   },
   "11": {
-    "ins": "ora ($hh),y"
+    "ins": "ORA ($hh),y"
   },
   "15": {
-    "ins": "ora $hh,x"
+    "ins": "ORA $hh,x"
   },
   "16": {
-    "ins": "asl $hh,x"
+    "ins": "ASL $hh,x"
   },
   "18": {
-    "ins": "clc"
+    "ins": "CLC"
   },
   "19": {
-    "ins": "ora $hhll,y"
+    "ins": "ORA $hhll,y"
   },
   "20": {
-    "ins": "jsr $hhll"
+    "ins": "JSR $hhll"
   },
   "21": {
-    "ins": "and ($hh,x)"
+    "ins": "AND ($hh,x)"
   },
   "24": {
-    "ins": "bit $hh"
+    "ins": "BIT $hh"
   },
   "25": {
-    "ins": "and $hh"
+    "ins": "AND $hh"
   },
   "26": {
-    "ins": "rol $hh"
+    "ins": "ROL $hh"
   },
   "28": {
-    "ins": "plp"
+    "ins": "PLP"
   },
   "29": {
-    "ins": "and #$hh"
+    "ins": "AND #$hh"
   },
   "30": {
-    "ins": "bmi $hh",
+    "ins": "BMI $hh",
     "rel": 1
   },
   "31": {
-    "ins": "and ($hh),y"
+    "ins": "AND ($hh),y"
   },
   "35": {
-    "ins": "and $hh,x"
+    "ins": "AND $hh,x"
   },
   "36": {
-    "ins": "rol $hh,x"
+    "ins": "ROL $hh,x"
   },
   "38": {
-    "ins": "sec"
+    "ins": "SEC"
   },
   "39": {
-    "ins": "and $hhll,y"
+    "ins": "AND $hhll,y"
   },
   "40": {
-    "ins": "rti"
+    "ins": "RTI"
   },
   "41": {
-    "ins": "eor ($hh,x)"
+    "ins": "EOR ($hh,x)"
   },
   "45": {
-    "ins": "eor $hh"
+    "ins": "EOR $hh"
   },
   "46": {
-    "ins": "lsr $hh"
+    "ins": "LSR $hh"
   },
   "48": {
-    "ins": "pha"
+    "ins": "PHA"
   },
   "49": {
-    "ins": "eor #$hh"
+    "ins": "EOR #$hh"
   },
   "50": {
-    "ins": "bvc $hh",
+    "ins": "BVC $hh",
     "rel": 1
   },
   "51": {
-    "ins": "eor ($hh),y"
+    "ins": "EOR ($hh),y"
   },
   "55": {
-    "ins": "eor $hh,x"
+    "ins": "EOR $hh,x"
   },
   "56": {
-    "ins": "lsr $hh,x"
+    "ins": "LSR $hh,x"
   },
   "58": {
-    "ins": "cli"
+    "ins": "CLI"
   },
   "59": {
-    "ins": "eor $hhll,y"
+    "ins": "EOR $hhll,y"
   },
   "60": {
-    "ins": "rts"
+    "ins": "RTS"
   },
   "61": {
-    "ins": "adc ($hh,x)"
+    "ins": "ADC ($hh,x)"
   },
   "65": {
-    "ins": "adc $hh"
+    "ins": "ADC $hh"
   },
   "66": {
-    "ins": "ror $hh"
+    "ins": "ROR $hh"
   },
   "68": {
-    "ins": "pla"
+    "ins": "PLA"
   },
   "69": {
-    "ins": "adc #$hh"
+    "ins": "ADC #$hh"
   },
   "70": {
-    "ins": "bvs $hh",
+    "ins": "BVS $hh",
     "rel": 1
   },
   "71": {
-    "ins": "adc ($hh),y"
+    "ins": "ADC ($hh),y"
   },
   "75": {
-    "ins": "adc $hh,x"
+    "ins": "ADC $hh,x"
   },
   "76": {
-    "ins": "ror $hh,x"
+    "ins": "ROR $hh,x"
   },
   "78": {
-    "ins": "sei"
+    "ins": "SEI"
   },
   "79": {
-    "ins": "adc $hhll,y"
+    "ins": "ADC $hhll,y"
   },
   "81": {
-    "ins": "sta ($hh,x)"
+    "ins": "STA ($hh,x)"
   },
   "84": {
-    "ins": "sty $hh"
+    "ins": "STY $hh"
   },
   "85": {
-    "ins": "sta $hh"
+    "ins": "STA $hh"
   },
   "86": {
-    "ins": "stx $hh"
+    "ins": "STX $hh"
   },
   "88": {
-    "ins": "dey"
+    "ins": "DEY"
   },
   "90": {
-    "ins": "bcc $hh",
+    "ins": "BCC $hh",
     "rel": 1
   },
   "91": {
-    "ins": "sta ($hh),y"
+    "ins": "STA ($hh),y"
   },
   "94": {
-    "ins": "sty $hh,x"
+    "ins": "STY $hh,x"
   },
   "95": {
-    "ins": "sta $hh,x"
+    "ins": "STA $hh,x"
   },
   "96": {
-    "ins": "stx $hh,y"
+    "ins": "STX $hh,y"
   },
   "98": {
-    "ins": "tya"
+    "ins": "TYA"
   },
   "99": {
-    "ins": "sta $hhll,y"
+    "ins": "STA $hhll,y"
   },
   "00": {
-    "ins": "brk"
+    "ins": "BRK"
   },
   "01": {
-    "ins": "ora ($hh,x)"
+    "ins": "ORA ($hh,x)"
   },
   "05": {
-    "ins": "ora $hh"
+    "ins": "ORA $hh"
   },
   "06": {
-    "ins": "asl $hh"
+    "ins": "ASL $hh"
   },
   "08": {
-    "ins": "php"
+    "ins": "PHP"
   },
   "09": {
-    "ins": "ora #$hh"
+    "ins": "ORA #$hh"
   },
-  "0a": {
-    "ins": "asl"
+  "0A": {
+    "ins": "ASL"
   },
-  "0d": {
-    "ins": "ora $hhll"
+  "0D": {
+    "ins": "ORA $hhll"
   },
-  "0e": {
-    "ins": "asl $hhll"
+  "0E": {
+    "ins": "ASL $hhll"
   },
-  "1d": {
-    "ins": "ora $hhll,x"
+  "1D": {
+    "ins": "ORA $hhll,x"
   },
-  "1e": {
-    "ins": "asl $hhll,x"
+  "1E": {
+    "ins": "ASL $hhll,x"
   },
-  "2a": {
-    "ins": "rol"
+  "2A": {
+    "ins": "ROL"
   },
-  "2c": {
-    "ins": "bit $hhll"
+  "2C": {
+    "ins": "BIT $hhll"
   },
-  "2d": {
-    "ins": "and $hhll"
+  "2D": {
+    "ins": "AND $hhll"
   },
-  "2e": {
-    "ins": "rol $hhll"
+  "2E": {
+    "ins": "ROL $hhll"
   },
-  "3d": {
-    "ins": "and $hhll,x"
+  "3D": {
+    "ins": "AND $hhll,x"
   },
-  "3e": {
-    "ins": "rol $hhll,x"
+  "3E": {
+    "ins": "ROL $hhll,x"
   },
-  "4a": {
-    "ins": "lsr"
+  "4A": {
+    "ins": "LSR"
   },
-  "4c": {
-    "ins": "jmp $hhll"
+  "4C": {
+    "ins": "JMP $hhll"
   },
-  "4d": {
-    "ins": "eor $hhll"
+  "4D": {
+    "ins": "EOR $hhll"
   },
-  "4e": {
-    "ins": "lsr $hhll"
+  "4E": {
+    "ins": "LSR $hhll"
   },
-  "5d": {
-    "ins": "eor $hhll,x"
+  "5D": {
+    "ins": "EOR $hhll,x"
   },
-  "5e": {
-    "ins": "lsr $hhll,x"
+  "5E": {
+    "ins": "LSR $hhll,x"
   },
-  "6a": {
-    "ins": "ror"
+  "6A": {
+    "ins": "ROR"
   },
-  "6c": {
-    "ins": "jmp ($hhll)"
+  "6C": {
+    "ins": "JMP ($hhll)"
   },
-  "6d": {
-    "ins": "adc $hhll"
+  "6D": {
+    "ins": "ADC $hhll"
   },
-  "6e": {
-    "ins": "ror $hhll"
+  "6E": {
+    "ins": "ROR $hhll"
   },
-  "7d": {
-    "ins": "adc $hhll,x"
+  "7D": {
+    "ins": "ADC $hhll,x"
   },
-  "7e": {
-    "ins": "ror $hhll,x"
+  "7E": {
+    "ins": "ROR $hhll,x"
   },
-  "8a": {
-    "ins": "txa"
+  "8A": {
+    "ins": "TXA"
   },
-  "8c": {
-    "ins": "sty $hhll"
+  "8C": {
+    "ins": "STY $hhll"
   },
-  "8d": {
-    "ins": "sta $hhll"
+  "8D": {
+    "ins": "STA $hhll"
   },
-  "8e": {
-    "ins": "stx $hhll"
+  "8E": {
+    "ins": "STX $hhll"
   },
-  "9a": {
-    "ins": "txs"
+  "9A": {
+    "ins": "TXS"
   },
-  "9d": {
-    "ins": "sta $hhll,x"
+  "9D": {
+    "ins": "STA $hhll,x"
   },
-  "a0": {
-    "ins": "ldy #$hh"
+  "A0": {
+    "ins": "LDY #$hh"
   },
-  "a1": {
-    "ins": "lda ($hh,x)"
+  "A1": {
+    "ins": "LDA ($hh,x)"
   },
-  "a2": {
-    "ins": "ldx #$hh"
+  "A2": {
+    "ins": "LDX #$hh"
   },
-  "a4": {
-    "ins": "ldy $hh"
+  "A4": {
+    "ins": "LDY $hh"
   },
-  "a5": {
-    "ins": "lda $hh"
+  "A5": {
+    "ins": "LDA $hh"
   },
-  "a6": {
-    "ins": "ldx $hh"
+  "A6": {
+    "ins": "LDX $hh"
   },
-  "a8": {
-    "ins": "tay"
+  "A8": {
+    "ins": "TAY"
   },
-  "a9": {
-    "ins": "lda #$hh"
+  "A9": {
+    "ins": "LDA #$hh"
   },
-  "aa": {
-    "ins": "tax"
+  "AA": {
+    "ins": "TAX"
   },
-  "ac": {
-    "ins": "ldy $hhll"
+  "AC": {
+    "ins": "LDY $hhll"
   },
-  "ad": {
-    "ins": "lda $hhll"
+  "AD": {
+    "ins": "LDA $hhll"
   },
-  "ae": {
-    "ins": "ldx $hhll"
+  "AE": {
+    "ins": "LDX $hhll"
   },
-  "b0": {
-    "ins": "bcs $hh",
+  "B0": {
+    "ins": "BCS $hh",
     "rel": 1
   },
-  "b1": {
-    "ins": "lda ($hh),y"
+  "B1": {
+    "ins": "LDA ($hh),y"
   },
-  "b4": {
-    "ins": "ldy $hh,x"
+  "B4": {
+    "ins": "LDY $hh,x"
   },
-  "b5": {
-    "ins": "lda $hh,x"
+  "B5": {
+    "ins": "LDA $hh,x"
   },
-  "b6": {
-    "ins": "ldx $hh,x"
+  "B6": {
+    "ins": "LDX $hh,x"
   },
-  "b8": {
-    "ins": "clv"
+  "B8": {
+    "ins": "CLV"
   },
-  "b9": {
-    "ins": "lda $hhll,y"
+  "B9": {
+    "ins": "LDA $hhll,y"
   },
-  "ba": {
-    "ins": "tsx"
+  "BA": {
+    "ins": "TSX"
   },
-  "bc": {
-    "ins": "ldy $hhll,x"
+  "BC": {
+    "ins": "LDY $hhll,x"
   },
-  "bd": {
-    "ins": "lda $hhll,x"
+  "BD": {
+    "ins": "LDA $hhll,x"
   },
-  "be": {
-    "ins": "ldx $hhll,x"
+  "BE": {
+    "ins": "LDX $hhll,x"
   },
-  "c0": {
-    "ins": "cpy #$hh"
+  "C0": {
+    "ins": "CPY #$hh"
   },
-  "c1": {
-    "ins": "cmp ($hh,x)"
+  "C1": {
+    "ins": "CMP ($hh,x)"
   },
-  "c4": {
-    "ins": "cpy $hh"
+  "C4": {
+    "ins": "CPY $hh"
   },
-  "c5": {
-    "ins": "cmp $hh"
+  "C5": {
+    "ins": "CMP $hh"
   },
-  "c6": {
-    "ins": "dec $hh"
+  "C6": {
+    "ins": "DEC $hh"
   },
-  "c8": {
-    "ins": "iny"
+  "C8": {
+    "ins": "INY"
   },
-  "c9": {
-    "ins": "cmp #$hh"
+  "C9": {
+    "ins": "CMP #$hh"
   },
-  "ca": {
-    "ins": "dex"
+  "CA": {
+    "ins": "DEX"
   },
-  "cc": {
-    "ins": "cpy $hhll"
+  "CC": {
+    "ins": "CPY $hhll"
   },
-  "cd": {
-    "ins": "cmp $hhll"
+  "CD": {
+    "ins": "CMP $hhll"
   },
-  "ce": {
-    "ins": "dec $hhll"
+  "CE": {
+    "ins": "DEC $hhll"
   },
-  "d0": {
-    "ins": "bne $hh",
+  "D0": {
+    "ins": "BNE $hh",
     "rel": 1
   },
-  "d1": {
-    "ins": "cmp ($hh),y"
+  "D1": {
+    "ins": "CMP ($hh),y"
   },
-  "d5": {
-    "ins": "cmp $hh,x"
+  "D5": {
+    "ins": "CMP $hh,x"
   },
-  "d6": {
-    "ins": "dec $hh,x"
+  "D6": {
+    "ins": "DEC $hh,x"
   },
-  "d8": {
-    "ins": "cld"
+  "D8": {
+    "ins": "CLD"
   },
-  "d9": {
-    "ins": "cmp $hhll,y"
+  "D9": {
+    "ins": "CMP $hhll,y"
   },
-  "dd": {
-    "ins": "cmp $hhll,x"
+  "DD": {
+    "ins": "CMP $hhll,x"
   },
-  "de": {
-    "ins": "dec $hhll,x"
+  "DE": {
+    "ins": "DEC $hhll,x"
   },
-  "e0": {
-    "ins": "cpx #$hh"
+  "E0": {
+    "ins": "CPX #$hh"
   },
-  "e1": {
-    "ins": "sbc ($hh,x)"
+  "E1": {
+    "ins": "SBC ($hh,x)"
   },
-  "e4": {
-    "ins": "cpx $hh"
+  "E4": {
+    "ins": "CPX $hh"
   },
-  "e5": {
-    "ins": "sbc $hh"
+  "E5": {
+    "ins": "SBC $hh"
   },
-  "e6": {
-    "ins": "inc $hh"
+  "E6": {
+    "ins": "INC $hh"
   },
-  "e8": {
-    "ins": "inx"
+  "E8": {
+    "ins": "INX"
   },
-  "e9": {
-    "ins": "sbc #$hh"
+  "E9": {
+    "ins": "SBC #$hh"
   },
-  "ea": {
-    "ins": "nop"
+  "EA": {
+    "ins": "NOP"
   },
-  "ec": {
-    "ins": "cpx $hhll"
+  "EC": {
+    "ins": "CPX $hhll"
   },
-  "ed": {
-    "ins": "sbc $hhll"
+  "ED": {
+    "ins": "SBC $hhll"
   },
-  "ee": {
-    "ins": "inc $hhll"
+  "EE": {
+    "ins": "INC $hhll"
   },
-  "f0": {
-    "ins": "beq $hh",
+  "F0": {
+    "ins": "BEQ $hh",
     "rel": 1
   },
-  "f1": {
-    "ins": "sbc ($hh),y"
+  "F1": {
+    "ins": "SBC ($hh),y"
   },
-  "f5": {
-    "ins": "sbc $hh,x"
+  "F5": {
+    "ins": "SBC $hh,x"
   },
-  "f6": {
-    "ins": "inc $hh,x"
+  "F6": {
+    "ins": "INC $hh,x"
   },
-  "f8": {
-    "ins": "sed"
+  "F8": {
+    "ins": "SED"
   },
-  "f9": {
-    "ins": "sbc $hhll,y"
+  "F9": {
+    "ins": "SBC $hhll,y"
   },
-  "fd": {
-    "ins": "sbc $hhll,x"
+  "FD": {
+    "ins": "SBC $hhll,x"
   },
-  "fe": {
-    "ins": "inc $hhll,x"
+  "FE": {
+    "ins": "INC $hhll,x"
   }
 }
