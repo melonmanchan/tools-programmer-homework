@@ -45,7 +45,7 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
 struct Disassembly {
     instructions: String,
     bytes_used: Vec<u8>,
-    origin_address: u8,
+    start_address: u16,
 }
 
 fn disassemble(data: Vec<u8>) -> Output {
@@ -58,6 +58,7 @@ fn disassemble(data: Vec<u8>) -> Output {
     let map = opcode::INSTRUCTION_MAP.clone();
 
     while pc < end {
+        let start_address = pc as u16;
         let start_byte = data[pc];
 
         if let Some(opcode) = map.get(&start_byte) {
@@ -90,7 +91,7 @@ fn disassemble(data: Vec<u8>) -> Output {
                     let out = Disassembly {
                         instructions: instr,
                         bytes_used,
-                        origin_address: pc as u8,
+                        start_address,
                     };
 
                     disassembly.push(out);
@@ -109,7 +110,7 @@ fn disassemble(data: Vec<u8>) -> Output {
                     let out = Disassembly {
                         instructions: instr,
                         bytes_used,
-                        origin_address: pc as u8,
+                        start_address,
                     };
 
                     disassembly.push(out);
@@ -123,7 +124,10 @@ fn disassemble(data: Vec<u8>) -> Output {
     println!("{:x?}", data);
 
     for i in disassembly.iter() {
-        println!("{:X?} {:X?} {}", 0, i.bytes_used, i.instructions);
+        println!(
+            "0x{:04X} {:X?} {}",
+            i.start_address, i.bytes_used, i.instructions
+        );
     }
 
     Output {
