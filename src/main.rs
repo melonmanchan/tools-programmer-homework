@@ -43,9 +43,9 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
 
 #[derive(Debug)]
 struct Disassembly {
-    instructions: String,
-    bytes_used: Vec<u8>,
     start_address: u16,
+    bytes_used: Vec<u8>,
+    instructions: String,
 }
 
 fn disassemble(data: Vec<u8>) -> Output {
@@ -240,7 +240,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_first_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -249,7 +248,53 @@ mod tests {
 
         let payload = Payload { data };
 
-        let _res: Output = client
+        // Stolen from https://www.masswerk.at/6502/disassembler.html
+        let expected: Output = Output {
+            disassembly: [
+                "0x0000 48 PHA",
+                "0x0001 e7 ???",
+                "0x0002 20 20 70 JSR $7020",
+                "0x0005 21 61 AND ($61,x)",
+                "0x0007 00 BRK",
+                "0x0008 f8 SED",
+                "0x0009 ee 61 e6 INC $e661",
+                "0x000C 61 00 ADC ($00,x)",
+                "0x000E 04 ???",
+                "0x000F 02 ???",
+                "0x0010 22 ???",
+                "0x0011 6e 00 84 ROR $8400",
+                "0x0014 41 e9 EOR ($e9,x)",
+                "0x0016 00 BRK",
+                "0x0017 16 74 ASL $74,x",
+                "0x0019 07 ???",
+                "0x001A 0c ???",
+                "0x001B 00 BRK",
+                "0x001C 00 BRK",
+                "0x001D 44 ???",
+                "0x001E 67 ???",
+                "0x001F 18 CLC",
+                "0x0020 41 e8 EOR ($e8,x)",
+                "0x0022 00 BRK",
+                "0x0023 20 74 06 JSR $0674",
+                "0x0026 0c ???",
+                "0x0027 00 BRK",
+                "0x0028 00 BRK",
+                "0x0029 41 67 EOR ($67,x)",
+                "0x002B 0c ???",
+                "0x002C 45 e9 EOR $e9",
+                "0x002E 00 BRK",
+                "0x002F 06 0c ASL $0c",
+                "0x0031 00 BRK",
+                "0x0032 00 BRK",
+                "0x0033 55 67 EOR $67,x",
+                "0x0035 1e 60 38 ASL $3860,x",
+            ]
+            .iter()
+            .map(|&s| s.into())
+            .collect(),
+        };
+
+        let res: Output = client
             .post(URL)
             .json(&payload)
             .send()
@@ -259,7 +304,7 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(true, true);
+        assert_eq!(res, expected);
     }
 
     #[tokio::test]
