@@ -22,7 +22,6 @@ fn get_json_content() -> serde_json::Value {
     as_json
 }
 
-// TODO: This should be read from the json file at build-time
 fn create_instruction_map() -> HashMap<u8, OpCode> {
     let json_content = get_json_content();
 
