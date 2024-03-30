@@ -235,7 +235,7 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
     map.insert(
         0x55,
         OpCode {
-            instructions: "eor $hh,y".into(),
+            instructions: "eor $hh,x".into(),
             is_relative: None,
         },
     );

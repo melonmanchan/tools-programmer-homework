@@ -78,8 +78,6 @@ fn disassemble(data: Vec<u8>) -> Output {
                 pc += 1;
             }
 
-            println!("{} {}", start_byte, opcode.instructions);
-
             match instructions_len {
                 0 => {
                     let out = Disassembly {
@@ -128,7 +126,17 @@ fn disassemble(data: Vec<u8>) -> Output {
                 }
                 _ => panic!("Invalid instruction length"),
             }
+        } else {
+            // Unknown opcode
+            let out = Disassembly {
+                instructions: "???".to_string(),
+                bytes_used: vec![start_byte],
+                start_address,
+            };
+
+            disassembly.push(out);
         }
+
         pc += 1;
     }
 
