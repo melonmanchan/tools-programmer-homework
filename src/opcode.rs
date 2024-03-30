@@ -32,10 +32,12 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
         .map(|(key, value)| {
             let instructions = value["ins"].as_str().unwrap();
             let is_relative = value["rel"].as_u64();
+
             let opcode = OpCode {
                 instructions: instructions.to_string(),
                 is_relative: is_relative.map(|x| x == 1),
             };
+
             (u8::from_str_radix(key, 16).unwrap(), opcode)
         })
         .collect();

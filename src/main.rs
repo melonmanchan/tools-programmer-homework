@@ -26,6 +26,7 @@ async fn main() {
 #[derive(Debug, Serialize, Deserialize)]
 struct Payload {
     data: Vec<u8>,
+    start_address: Option<u16>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -34,9 +35,12 @@ struct Output {
 }
 
 async fn handler(Json(payload): Json<Payload>) -> Response {
-    let Payload { data } = payload;
+    let Payload {
+        data,
+        start_address,
+    } = payload;
 
-    let res = disassemble(data);
+    let res = disassemble(data, start_address);
 
     Json(res).into_response()
 }
@@ -48,24 +52,20 @@ struct Disassembly {
     instructions: String,
 }
 
-fn disassemble(data: Vec<u8>) -> Output {
+fn disassemble(data: Vec<u8>, start_address: Option<u16>) -> Output {
     // process the incoming data here and return type Output
     // loop over vector
-
     let mut disassembly = Vec::new();
-    let mut pc = 0;
+    let mut pc = usize::from(start_address.unwrap_or(0));
     let end = data.len();
-    let map = opcode::INSTRUCTION_MAP.clone();
+    let map = &opcode::INSTRUCTION_MAP;
 
     while pc < end {
         let start_address = pc as u16;
         let start_byte = data[pc];
 
         if let Some(opcode) = map.get(&start_byte) {
-            let code = opcode.instructions.to_string();
-
-            // let mut bytes = Vec::new();
-
+            let code = &opcode.instructions;
             let mut instructions_len = 0;
 
             if code.contains("hh") {
@@ -197,8 +197,6 @@ fn disassemble(data: Vec<u8>) -> Output {
         })
         .collect();
 
-    println!("{:?}", output_disassembly);
-
     Output {
         disassembly: output_disassembly,
     }
@@ -214,6 +212,7 @@ mod tests {
 
         let payload = Payload {
             data: [0xa9, 0xbd, 0xa0, 0xbd, 0x20, 0x28, 0xba].to_vec(),
+            start_address: Some(0x0000),
         };
 
         let res: Output = client
@@ -246,7 +245,10 @@ mod tests {
 
         let data = std::fs::read("./test-bin/test1.bin").unwrap();
 
-        let payload = Payload { data };
+        let payload = Payload {
+            data,
+            start_address: Some(0x0000),
+        };
 
         // Stolen from https://www.masswerk.at/6502/disassembler.html
         let expected: Output = Output {
@@ -315,7 +317,10 @@ mod tests {
 
         let data = std::fs::read("./test-bin/test2.bin").unwrap();
 
-        let payload = Payload { data };
+        let payload = Payload {
+            data,
+            start_address: Some(0x0000),
+        };
 
         let expected: Output = Output {
             disassembly: [
