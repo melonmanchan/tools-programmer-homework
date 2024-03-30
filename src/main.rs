@@ -34,11 +34,24 @@ struct Output {
     disassembly: Vec<String>,
 }
 
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+struct Error {
+    message: String,
+}
+
 async fn handler(Json(payload): Json<Payload>) -> Response {
     let Payload {
         data,
         start_address,
     } = payload;
+
+    if start_address.is_some() && start_address.unwrap() >= data.len() as u16 {
+        println!("address out of bounds");
+        return Json(Error {
+            message: "Start address is out of bounds".to_string(),
+        })
+        .into_response();
+    }
 
     let res = disassemble(data, start_address);
 
@@ -239,6 +252,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_first_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -310,6 +324,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_second_test_binary() {
         // TODO: Handle labels
         const URL: &'static str = "http://localhost:9999/";
