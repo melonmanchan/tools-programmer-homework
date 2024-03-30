@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
+// TODO: Derive default trait for the is_relative
 #[derive(Clone, Debug)]
 pub struct OpCode {
     pub instructions: String,
@@ -11,8 +12,7 @@ lazy_static! {
     pub static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
 }
 
-// TODO: Add rest of instructions, look into static hashmap
-// https://docs.rs/phf/latest/phf/
+// TODO: This should be read from the json file at build-time
 fn create_instruction_map() -> HashMap<u8, OpCode> {
     let mut map: HashMap<u8, OpCode> = HashMap::new();
 
@@ -1226,14 +1226,6 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
         0x3d,
         OpCode {
             instructions: "and $hhll,x".into(),
-            is_relative: None,
-        },
-    );
-
-    map.insert(
-        0xa9,
-        OpCode {
-            instructions: "lda".to_string(),
             is_relative: None,
         },
     );
