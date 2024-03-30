@@ -5,7 +5,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
-use tracing::info;
+use tracing::{info, instrument};
 
 mod opcode;
 
@@ -41,18 +41,26 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
     Json(res).into_response()
 }
 
+#[derive(Debug)]
+struct Disassembly {
+    instructions: String,
+    bytes_used: Vec<u8>,
+    origin_address: u8,
+}
+
 fn disassemble(data: Vec<u8>) -> Output {
     // process the incoming data here and return type Output
     // loop over vector
 
-    let mut output = Vec::new();
+    let mut disassembly = Vec::new();
     let mut pc = 0;
     let end = data.len();
     let map = opcode::INSTRUCTION_MAP.clone();
 
     while pc < end {
-        // TODO: Handle illegal opcodes
-        if let Some(opcode) = map.get(&data[pc]) {
+        let start_byte = data[pc];
+
+        if let Some(opcode) = map.get(&start_byte) {
             let code = opcode.instructions.to_string();
 
             // let mut bytes = Vec::new();
@@ -71,23 +79,40 @@ fn disassemble(data: Vec<u8>) -> Output {
 
             match instructions_len {
                 1 => {
-                    let high_byte = data[pc - 1];
-                    output.push(
-                        opcode
-                            .instructions
-                            .replace("hh", &format!("{:02x}", high_byte)),
-                    );
+                    let high_byte = data[pc];
+
+                    let instr = opcode
+                        .instructions
+                        .replace("hh", &format!("{:02x}", high_byte));
+
+                    let bytes_used = vec![start_byte, high_byte];
+
+                    let out = Disassembly {
+                        instructions: instr,
+                        bytes_used,
+                        origin_address: pc as u8,
+                    };
+
+                    disassembly.push(out);
                 }
                 2 => {
                     let low_byte = data[pc - 1];
                     let high_byte = data[pc];
 
-                    output.push(
-                        opcode
-                            .instructions
-                            .replace("hh", &format!("{:02x}", high_byte))
-                            .replace("ll", &format!("{:02x}", low_byte)),
-                    );
+                    let instr = opcode
+                        .instructions
+                        .replace("hh", &format!("{:02x}", high_byte))
+                        .replace("ll", &format!("{:02x}", low_byte));
+
+                    let bytes_used = vec![start_byte, low_byte, high_byte];
+
+                    let out = Disassembly {
+                        instructions: instr,
+                        bytes_used,
+                        origin_address: pc as u8,
+                    };
+
+                    disassembly.push(out);
                 }
                 _ => panic!("Invalid instruction length"),
             }
@@ -96,7 +121,10 @@ fn disassemble(data: Vec<u8>) -> Output {
     }
 
     println!("{:x?}", data);
-    println!("{:?}", output);
+
+    for i in disassembly.iter() {
+        println!("{:X?} {:X?} {}", 0, i.bytes_used, i.instructions);
+    }
 
     Output {
         disassembly: [
