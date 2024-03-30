@@ -3,7 +3,6 @@ use serde_json;
 use std::collections::HashMap;
 use std::path::Path;
 
-// TODO: Derive default trait for the is_relative
 #[derive(Clone, Debug)]
 pub struct OpCode {
     pub instructions: String,
