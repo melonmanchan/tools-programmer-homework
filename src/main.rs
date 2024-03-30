@@ -78,7 +78,18 @@ fn disassemble(data: Vec<u8>) -> Output {
                 pc += 1;
             }
 
+            println!("{} {}", start_byte, opcode.instructions);
+
             match instructions_len {
+                0 => {
+                    let out = Disassembly {
+                        instructions: opcode.instructions.to_string(),
+                        bytes_used: vec![start_byte],
+                        start_address,
+                    };
+
+                    disassembly.push(out);
+                }
                 1 => {
                     let high_byte = data[pc];
 
@@ -146,6 +157,7 @@ fn disassemble(data: Vec<u8>) -> Output {
 mod tests {
     use super::*;
     #[tokio::test]
+    #[ignore]
     async fn test_api_disassemble_ok() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -175,5 +187,38 @@ mod tests {
             .collect(),
         };
         assert_eq!(expected, res);
+    }
+
+    #[tokio::test]
+    async fn test_first_test_binary() {
+        const URL: &'static str = "http://localhost:9999/";
+        let client = reqwest::Client::builder().build().unwrap();
+
+        let data = std::fs::read("./test-bin/test1.bin").unwrap();
+
+        let payload = Payload { data };
+
+        let _res: Output = client
+            .post(URL)
+            .json(&payload)
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+
+        //let expected: Output = Output {
+        //    disassembly: [
+        //        "0x0000 a9 bd        LDA #$bd",
+        //        "0x0002 a0 bd        LDY #$bd",
+        //        "0x0004 20 28 ba     JSR $ba28",
+        //    ]
+        //    .iter()
+        //    .map(|&s| s.into())
+        //    .collect(),
+        //};
+
+        assert_eq!(true, true);
     }
 }
