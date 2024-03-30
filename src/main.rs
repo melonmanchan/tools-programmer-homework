@@ -45,12 +45,14 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
         start_address,
     } = payload;
 
-    if start_address.is_some() && start_address.unwrap() >= data.len() as u16 {
-        println!("address out of bounds");
-        return Json(Error {
-            message: "Start address is out of bounds".to_string(),
-        })
-        .into_response();
+    match start_address {
+        Some(address) if address as usize >= data.len() => {
+            return Json(Error {
+                message: "Start address is out of bounds".to_string(),
+            })
+            .into_response();
+        }
+        _ => {}
     }
 
     let res = disassemble(data, start_address);
