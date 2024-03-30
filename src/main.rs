@@ -102,10 +102,10 @@ fn disassemble(data: Vec<u8>) -> Output {
                     */
 
                     if is_relative {
+                        // Thanks chatgpt for this... Fucking off by ones
                         let signed_offset = high_byte as i8;
                         let target_address = pc as i16 + 1 + signed_offset as i16;
 
-                        // Thanks chatgpt for this... Fucking off by ones
                         let instr = opcode
                             .instructions
                             .replace("hh", &format!("{:04X}", target_address));
@@ -113,7 +113,7 @@ fn disassemble(data: Vec<u8>) -> Output {
                         let bytes_used = vec![start_byte, high_byte];
 
                         let out = Disassembly {
-                            instructions: instr, // Assuming the instructions are already in uppercase or the desired format
+                            instructions: instr,
                             bytes_used,
                             start_address,
                         };
