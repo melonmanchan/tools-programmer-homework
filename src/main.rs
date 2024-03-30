@@ -102,42 +102,24 @@ fn disassemble(data: Vec<u8>) -> Output {
                     */
 
                     if is_relative {
-                        if high_byte > 127 {
-                            println!("byte: {}, pc: {}", high_byte, pc);
-                            // byte: 154, pc: 33
-                            let address = (pc as u8) - (255 - high_byte);
+                        let signed_offset = high_byte as i8;
+                        let target_address = pc as i16 + 1 + signed_offset as i16;
 
-                            let instr = opcode
-                                .instructions
-                                .replace("hh", &format!("{:02x}", address));
+                        // Thanks chatgpt for this... Fucking off by ones
+                        let instr = opcode
+                            .instructions
+                            .replace("hh", &format!("{:04X}", target_address));
 
-                            let bytes_used = vec![start_byte, high_byte];
+                        let bytes_used = vec![start_byte, high_byte];
 
-                            let out = Disassembly {
-                                instructions: instr,
-                                bytes_used,
-                                start_address,
-                            };
+                        let out = Disassembly {
+                            instructions: instr, // Assuming the instructions are already in uppercase or the desired format
+                            bytes_used,
+                            start_address,
+                        };
 
-                            disassembly.push(out);
-                        } else {
-                            let address = (pc as u8) + high_byte + 1;
-
-                            let instr = opcode
-                                .instructions
-                                .replace("hh", &format!("{:02x}", address));
-
-                            let bytes_used = vec![start_byte, high_byte];
-
-                            let out = Disassembly {
-                                instructions: instr,
-                                bytes_used,
-                                start_address,
-                            };
-
-                            disassembly.push(out);
-                        }
-
+                        disassembly.push(out);
+                        pc += 1; // Move past the operand for the next iteration
                         continue;
                     }
 
