@@ -43,23 +43,60 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
 
 fn disassemble(data: Vec<u8>) -> Output {
     // process the incoming data here and return type Output
-
     // loop over vector
 
+    let mut output = Vec::new();
     let mut pc = 0;
     let end = data.len();
     let map = opcode::INSTRUCTION_MAP.clone();
 
     while pc < end {
-        println!("{:02x}", data[pc]);
-
         if let Some(opcode) = map.get(&data[pc]) {
-            println!("{:?}", opcode.instructions);
+            let code = opcode.instructions.to_string();
+
+            // let mut bytes = Vec::new();
+
+            let mut instructions_len = 0;
+
+            if code.contains("hh") {
+                instructions_len += 1;
+                pc += 1;
+            }
+
+            if code.contains("ll") {
+                instructions_len += 1;
+                pc += 1;
+            }
+
+            if instructions_len == 1 {
+                let high_byte = data[pc];
+
+                output.push(
+                    opcode
+                        .instructions
+                        .replace("hh", &format!("{:02x}", high_byte)),
+                );
+            }
+
+            if instructions_len == 2 {
+                let low_byte = data[pc - 1];
+                let high_byte = data[pc];
+
+                output.push(
+                    opcode
+                        .instructions
+                        .replace("hh", &format!("{:02x}", high_byte))
+                        .replace("ll", &format!("{:02x}", low_byte)),
+                );
+            }
+
+            // output.push(opcode.instructions.to_string());
         }
         pc += 1;
     }
 
-    println!("pc: {}", pc);
+    println!("{:x?}", data);
+    println!("{:?}", output);
 
     Output {
         disassembly: [
