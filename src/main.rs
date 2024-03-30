@@ -51,6 +51,7 @@ fn disassemble(data: Vec<u8>) -> Output {
     let map = opcode::INSTRUCTION_MAP.clone();
 
     while pc < end {
+        // TODO: Handle illegal opcodes
         if let Some(opcode) = map.get(&data[pc]) {
             let code = opcode.instructions.to_string();
 
@@ -68,29 +69,28 @@ fn disassemble(data: Vec<u8>) -> Output {
                 pc += 1;
             }
 
-            if instructions_len == 1 {
-                let high_byte = data[pc];
+            match instructions_len {
+                1 => {
+                    let high_byte = data[pc - 1];
+                    output.push(
+                        opcode
+                            .instructions
+                            .replace("hh", &format!("{:02x}", high_byte)),
+                    );
+                }
+                2 => {
+                    let low_byte = data[pc - 1];
+                    let high_byte = data[pc];
 
-                output.push(
-                    opcode
-                        .instructions
-                        .replace("hh", &format!("{:02x}", high_byte)),
-                );
+                    output.push(
+                        opcode
+                            .instructions
+                            .replace("hh", &format!("{:02x}", high_byte))
+                            .replace("ll", &format!("{:02x}", low_byte)),
+                    );
+                }
+                _ => panic!("Invalid instruction length"),
             }
-
-            if instructions_len == 2 {
-                let low_byte = data[pc - 1];
-                let high_byte = data[pc];
-
-                output.push(
-                    opcode
-                        .instructions
-                        .replace("hh", &format!("{:02x}", high_byte))
-                        .replace("ll", &format!("{:02x}", low_byte)),
-                );
-            }
-
-            // output.push(opcode.instructions.to_string());
         }
         pc += 1;
     }
