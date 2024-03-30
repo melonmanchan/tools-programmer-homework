@@ -5,7 +5,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
-use tracing::{info, instrument};
+use tracing::info;
 
 mod opcode;
 
@@ -198,7 +198,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_first_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -221,6 +220,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_second_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
