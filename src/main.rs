@@ -218,6 +218,34 @@ fn disassemble(data: Vec<u8>, start_address: Option<u16>) -> Output {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn test_invalid_start() {
+        const URL: &'static str = "http://localhost:9999/";
+        let client = reqwest::Client::builder().build().unwrap();
+
+        let payload = Payload {
+            data: [0xa9, 0xbd, 0xa0, 0xbd].to_vec(),
+            start_address: Some(0x5000),
+        };
+
+        let res: Error = client
+            .post(URL)
+            .json(&payload)
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+
+        let expected: Error = Error {
+            message: "Start address is out of bounds".to_string(),
+        };
+
+        assert_eq!(expected, res);
+    }
+
     #[tokio::test]
     async fn test_api_disassemble_ok() {
         const URL: &'static str = "http://localhost:9999/";
