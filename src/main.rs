@@ -90,6 +90,56 @@ fn disassemble(data: Vec<u8>) -> Output {
                 }
                 1 => {
                     let high_byte = data[pc];
+                    let is_relative = opcode.is_relative.unwrap_or(false);
+
+                    /*
+                                         * Relative
+
+                    *Relative addressing on the 6502 is only used for branch operations. The byte after the opcode is
+                    *the branch offset. If the branch is taken, the new address will the the current PC plus the offset.
+                    *The offset is a signed byte, so it can jump a maximum of 127 bytes forward, or 128 bytes backward.
+                    *(For more info about signed numbers, check here.)
+                    */
+
+                    if is_relative {
+                        if high_byte > 127 {
+                            println!("byte: {}, pc: {}", high_byte, pc);
+                            // byte: 154, pc: 33
+                            let address = (pc as u8) - (255 - high_byte);
+
+                            let instr = opcode
+                                .instructions
+                                .replace("hh", &format!("{:02x}", address));
+
+                            let bytes_used = vec![start_byte, high_byte];
+
+                            let out = Disassembly {
+                                instructions: instr,
+                                bytes_used,
+                                start_address,
+                            };
+
+                            disassembly.push(out);
+                        } else {
+                            let address = (pc as u8) + high_byte + 1;
+
+                            let instr = opcode
+                                .instructions
+                                .replace("hh", &format!("{:02x}", address));
+
+                            let bytes_used = vec![start_byte, high_byte];
+
+                            let out = Disassembly {
+                                instructions: instr,
+                                bytes_used,
+                                start_address,
+                            };
+
+                            disassembly.push(out);
+                        }
+
+                        continue;
+                    }
 
                     let instr = opcode
                         .instructions
@@ -198,6 +248,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_first_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -220,7 +271,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_second_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();

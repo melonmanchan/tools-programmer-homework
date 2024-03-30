@@ -7,7 +7,7 @@ use std::path::Path;
 #[derive(Clone, Debug)]
 pub struct OpCode {
     pub instructions: String,
-    is_relative: Option<bool>,
+    pub is_relative: Option<bool>,
 }
 
 lazy_static! {
