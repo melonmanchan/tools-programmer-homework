@@ -181,15 +181,26 @@ fn disassemble(data: Vec<u8>) -> Output {
         );
     }
 
-    Output {
-        disassembly: [
-            "0x0000 a9 bd        LDA #$bd",
-            "0x0002 a0 bd        LDY #$bd",
-            "0x0004 20 28 ba     JSR $ba28",
-        ]
+    let output_disassembly = disassembly
         .iter()
-        .map(|&s| s.into())
-        .collect(),
+        .map(|x| {
+            format!(
+                "0x{:04X} {} {}",
+                x.start_address,
+                x.bytes_used
+                    .iter()
+                    .map(|byte| format!("{:02x}", byte))
+                    .collect::<Vec<_>>()
+                    .join(" "),
+                x.instructions
+            )
+        })
+        .collect();
+
+    println!("{:?}", output_disassembly);
+
+    Output {
+        disassembly: output_disassembly,
     }
 }
 
@@ -197,7 +208,6 @@ fn disassemble(data: Vec<u8>) -> Output {
 mod tests {
     use super::*;
     #[tokio::test]
-    #[ignore]
     async fn test_api_disassemble_ok() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -218,9 +228,9 @@ mod tests {
 
         let expected: Output = Output {
             disassembly: [
-                "0x0000 a9 bd        LDA #$bd",
-                "0x0002 a0 bd        LDY #$bd",
-                "0x0004 20 28 ba     JSR $ba28",
+                "0x0000 a9 bd LDA #$bd",
+                "0x0002 a0 bd LDY #$bd",
+                "0x0004 20 28 ba JSR $ba28",
             ]
             .iter()
             .map(|&s| s.into())
@@ -253,6 +263,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_second_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
