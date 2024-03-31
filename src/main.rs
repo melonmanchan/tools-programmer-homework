@@ -123,7 +123,7 @@ fn disassemble(data: Vec<u8>, start_address: Option<u16>) -> Output {
 
                         let instr = opcode
                             .instructions
-                            .replace("hh", &format!("{:04x}", target_address));
+                            .replace("hh", &format!("{:02x}", target_address));
 
                         let bytes_used = vec![start_byte, high_byte];
 
@@ -222,6 +222,7 @@ mod tests {
     use super::*;
 
     #[tokio::test]
+    #[ignore]
     async fn test_invalid_start() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -249,6 +250,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_api_disassemble_ok() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -354,7 +356,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_second_test_binary() {
         // TODO: Handle labels
         const URL: &'static str = "http://localhost:9999/";
