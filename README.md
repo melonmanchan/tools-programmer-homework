@@ -47,9 +47,36 @@ Don't hesitate to use pseudocode in places where you feel a lot of boilerplate o
 # Sources
 
 https://www.masswerk.at/6502/disassembler.html
+https://www.youtube.com/watch?v=mR1G9ZA2UfQ
 https://www.awsm.de/blog/pydisass/
 https://codeburst.io/an-introduction-to-6502-assembly-and-low-level-programming-7c11fa6b9cb9
 https://skilldrick.github.io/easy6502/
 
 Pasting shit to and from chatGPT :call_me:
 
+## Major things I left out
+
+I didn't bother adding labels, I had enough of looking at the disassemble
+method working on this over the weekend! Everything is just raw memory
+addresses in the output. With quick googling I would probably do this with a
+second first-pass, looping through the data and collecting the relevant memory
+addresses if we encounter a branching or jump instruction, then include them in
+the actual disassembly
+
+Second major thing I didn't bother with parsing the data section, now
+everything is treated as code! Most actual disassembled 6502 programs would
+then have big chunks of invalid opcodes or some other nonsense. It seems like
+quite the endeavor, but here's some things I would probably try out first
+
+- From the starting point, if we don't do any jumps or branching we're likely
+  still parsing code
+- if we encounter LDA/sta or similar load/store instructions, there's a good
+  change we're looking at data
+- If we do jmp or branch somewhere, it's likely code. Especially if the jump is
+  unconditional!
+- Maybe we can try to figure out if we're dealing with lines of ASCII or arrays
+  by comparing sequences of bytes for similarity (seems like a stretch)
+
+But yeah it's tricky! To alleviate the problem I'm allowing the user to provide
+the start and end address of the data they want to disassemble. This way they
+can just disassemble the code section and then the data section separately.
