@@ -1,4 +1,3 @@
-mod opcode;
 use lazy_static::lazy_static;
 use serde_json;
 use std::collections::HashMap;

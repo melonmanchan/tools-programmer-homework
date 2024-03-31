@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+mod opcode;
 
 #[derive(Debug)]
 pub struct Disassembly {
