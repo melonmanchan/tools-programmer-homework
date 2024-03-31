@@ -49,6 +49,7 @@ Don't hesitate to use pseudocode in places where you feel a lot of boilerplate o
 https://www.masswerk.at/6502/disassembler.html
 https://www.youtube.com/watch?v=mR1G9ZA2UfQ
 https://www.awsm.de/blog/pydisass/
+https://6502disassembly.com/on-disassembly.html
 https://codeburst.io/an-introduction-to-6502-assembly-and-low-level-programming-7c11fa6b9cb9
 https://skilldrick.github.io/easy6502/
 
