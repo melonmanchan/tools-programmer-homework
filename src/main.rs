@@ -263,6 +263,62 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_invalid_end() {
+        const URL: &'static str = "http://localhost:9999/";
+        let client = reqwest::Client::builder().build().unwrap();
+
+        let payload = Payload {
+            data: [0xa9, 0xbd, 0xa0, 0xbd].to_vec(),
+            start_address: None,
+            end_address: Some(5),
+        };
+
+        let res: Error = client
+            .post(URL)
+            .json(&payload)
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+
+        let expected: Error = Error {
+            message: "End address is out of bounds".to_string(),
+        };
+
+        assert_eq!(expected, res);
+    }
+
+    #[tokio::test]
+    async fn test_invalid_start_and_end() {
+        const URL: &'static str = "http://localhost:9999/";
+        let client = reqwest::Client::builder().build().unwrap();
+
+        let payload = Payload {
+            data: [0xa9, 0xbd, 0xa0, 0xbd].to_vec(),
+            start_address: Some(3),
+            end_address: Some(2),
+        };
+
+        let res: Error = client
+            .post(URL)
+            .json(&payload)
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+
+        let expected: Error = Error {
+            message: "Start address must be less than end address".to_string(),
+        };
+
+        assert_eq!(expected, res);
+    }
+
+    #[tokio::test]
     #[ignore]
     async fn test_api_disassemble_ok() {
         const URL: &'static str = "http://localhost:9999/";
