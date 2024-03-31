@@ -319,7 +319,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_api_disassemble_ok() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -354,7 +353,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_first_test_binary() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
@@ -427,9 +425,7 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_second_test_binary() {
-        // TODO: Handle labels
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
@@ -444,7 +440,7 @@ mod tests {
         let expected: Output = Output {
             disassembly: [
                 "0x0000 4e 56 ff LSR $ff56",
-                "0x0003 f0 48 BEQ l004d",
+                "0x0003 f0 48 BEQ $4d",
                 "0x0005 e7 ???",
                 "0x0006 3e 3c 24 ROL $243c,x",
                 "0x0009 6e 00 08 ROR $0800",
@@ -537,14 +533,14 @@ mod tests {
                 "0x0083 73 ???",
                 "0x0084 00 BRK",
                 "0x0085 28 PLP",
-                "0x0086 30 2c BMI l00b4",
+                "0x0086 30 2c BMI $b4",
                 "0x0088 00 BRK",
                 "0x0089 66 48 ROR $48",
                 "0x008B c0 46 CPY #$46",
                 "0x008D 80 ???",
                 "0x008E ca DEX",
                 "0x008F 80 ???",
-                "0x0090 30 2a BMI l00bc",
+                "0x0090 30 2a BMI $bc",
                 "0x0092 00 BRK",
                 "0x0093 20 20 6c JSR $6c20",
                 "0x0096 00 BRK",
@@ -555,7 +551,7 @@ mod tests {
                 "0x009E 00 BRK",
                 "0x009F f6 00 INC $00,x",
                 "0x00A1 1f ???",
-                "0x00A2 30 2c BMI $00d0",
+                "0x00A2 30 2c BMI $d0",
                 "0x00A4 00 BRK",
                 "0x00A5 66 48 ROR $48",
                 "0x00A7 c0 46 CPY #$46",
@@ -566,14 +562,14 @@ mod tests {
                 "0x00AE 25 40 AND $40",
                 "0x00B0 00 BRK",
                 "0x00B1 18 CLC",
-                "0x00B2 30 2a BMI $00de",
-                "0x00B4 00 l00b4 BRK",
+                "0x00B2 30 2a BMI $de",
+                "0x00B4 00 BRK",
                 "0x00B5 1c ???",
-                "0x00B6 d0 40 BNE $00f8",
-                "0x00B8 30 3b BMI $00f5",
+                "0x00B6 d0 40 BNE $f8",
+                "0x00B8 30 3b BMI $f5",
                 "0x00BA 00 BRK",
                 "0x00BB 02 ???",
-                "0x00BC 4e fb 00 l00bc LSR $00fb",
+                "0x00BC 4e fb 00 LSR $00fb",
                 "0x00BF 02 ???",
             ]
             .iter()

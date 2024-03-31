@@ -188,7 +188,7 @@
     "ins": "ORA #$hh"
   },
   "0A": {
-    "ins": "ASL"
+    "ins": "ASL a"
   },
   "0D": {
     "ins": "ORA $hhll"
@@ -203,7 +203,7 @@
     "ins": "ASL $hhll,x"
   },
   "2A": {
-    "ins": "ROL"
+    "ins": "ROL a"
   },
   "2C": {
     "ins": "BIT $hhll"
@@ -221,7 +221,7 @@
     "ins": "ROL $hhll,x"
   },
   "4A": {
-    "ins": "LSR"
+    "ins": "LSR a"
   },
   "4C": {
     "ins": "JMP $hhll"
@@ -239,7 +239,7 @@
     "ins": "LSR $hhll,x"
   },
   "6A": {
-    "ins": "ROR"
+    "ins": "ROR a"
   },
   "6C": {
     "ins": "JMP ($hhll)"
