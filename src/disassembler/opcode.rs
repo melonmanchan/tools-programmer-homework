@@ -1,7 +1,6 @@
 use lazy_static::lazy_static;
 use serde_json;
 use std::collections::HashMap;
-use std::path::Path;
 
 #[derive(Clone, Debug)]
 pub struct OpCode {
@@ -9,14 +8,14 @@ pub struct OpCode {
     pub is_relative: Option<bool>,
 }
 
+static OPCODE_FILE: &'static str = include_str!("./opcodes.json");
+
 lazy_static! {
     pub static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
 }
 
 fn get_json_content() -> serde_json::Value {
-    let data_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/opcodes.json");
-    let data = std::fs::read(data_path).unwrap();
-    let as_json = serde_json::from_slice(&data).unwrap();
+    let as_json = serde_json::from_str(&OPCODE_FILE).unwrap();
 
     as_json
 }
