@@ -27,6 +27,7 @@ async fn main() {
 struct Payload {
     data: Vec<u8>,
     start_address: Option<u16>,
+    end_address: Option<u16>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -43,19 +44,32 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
     let Payload {
         data,
         start_address,
+        end_address,
     } = payload;
 
-    match start_address {
-        Some(address) if address as usize >= data.len() => {
+    match (start_address, end_address) {
+        (Some(start), _) if start as usize >= data.len() => {
             return Json(Error {
                 message: "Start address is out of bounds".to_string(),
+            })
+            .into_response();
+        }
+        (_, Some(end)) if end as usize >= data.len() => {
+            return Json(Error {
+                message: "End address is out of bounds".to_string(),
+            })
+            .into_response();
+        }
+        (Some(start), Some(end)) if start >= end => {
+            return Json(Error {
+                message: "Start address must be less than end address".to_string(),
             })
             .into_response();
         }
         _ => {}
     }
 
-    let res = disassemble(data, start_address);
+    let res = disassemble(data, start_address, end_address);
 
     Json(res).into_response()
 }
@@ -67,12 +81,11 @@ struct Disassembly {
     instructions: String,
 }
 
-fn disassemble(data: Vec<u8>, start_address: Option<u16>) -> Output {
-    // process the incoming data here and return type Output
-    // loop over vector
+fn disassemble(data: Vec<u8>, start_address: Option<u16>, end_address: Option<u16>) -> Output {
     let mut disassembly = Vec::new();
+
     let mut pc = usize::from(start_address.unwrap_or(0));
-    let end = data.len();
+    let end = usize::from(end_address.unwrap_or(data.len() as u16));
     let map = &opcode::INSTRUCTION_MAP;
 
     while pc < end {
@@ -222,14 +235,14 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    #[ignore]
     async fn test_invalid_start() {
         const URL: &'static str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
             data: [0xa9, 0xbd, 0xa0, 0xbd].to_vec(),
-            start_address: Some(0x5000),
+            start_address: Some(5),
+            end_address: None,
         };
 
         let res: Error = client
@@ -258,6 +271,7 @@ mod tests {
         let payload = Payload {
             data: [0xa9, 0xbd, 0xa0, 0xbd, 0x20, 0x28, 0xba].to_vec(),
             start_address: Some(0x0000),
+            end_address: None,
         };
 
         let res: Output = client
@@ -294,6 +308,7 @@ mod tests {
         let payload = Payload {
             data,
             start_address: Some(0x0000),
+            end_address: None,
         };
 
         // Stolen from https://www.masswerk.at/6502/disassembler.html
@@ -356,6 +371,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_second_test_binary() {
         // TODO: Handle labels
         const URL: &'static str = "http://localhost:9999/";
@@ -366,6 +382,7 @@ mod tests {
         let payload = Payload {
             data,
             start_address: Some(0x0000),
+            end_address: None,
         };
 
         let expected: Output = Output {
