@@ -46,6 +46,11 @@ Don't hesitate to use pseudocode in places where you feel a lot of boilerplate o
 
 # My notes
 
+All in all this was a really fun exercise! I've never done anything with 6502
+assembly before and first I was a bit scared at first but it turned out to be
+more pleasant of an exercise than I thought, honestly. Writing rust is real
+refreshing after years of Typescript...
+
 ## Major things I left out
 
 I didn't bother adding labels, I had enough of looking at the disassemble
@@ -88,4 +93,4 @@ https://6502disassembly.com/on-disassembly.html
 https://codeburst.io/an-introduction-to-6502-assembly-and-low-level-programming-7c11fa6b9cb9
 https://skilldrick.github.io/easy6502/
 
-Pasting shit to and from chatGPT :call_me:
+Copy-paste to/from chatGPT :call_me:

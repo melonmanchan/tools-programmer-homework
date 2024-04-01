@@ -68,9 +68,14 @@ impl fmt::Display for Disassembly {
     }
 }
 
-// This handy opcode file came from https://www.awsm.de/blog/pydisass/
-// in the start the `create_instruction_map` function was a massive mega-imperative pile fo HashMap.insert
-// calls, so I found this nice looking JSON file and decided to use it instead...
+// This handy opcode file came from https://www.awsm.de/blog/pydisass/ in the start the
+// `create_instruction_map` function was a massive mega-imperative pile fo HashMap.insert calls, so
+// I found this nice looking JSON file and decided to use it as a base for my own instead, even
+// though I had to fix some typos and double-check it against the offical reference
+//
+// Initially I had an idea that the caller could pass in their custom illegal opcode map in the
+// request payload since there's seemingly so many flavors of 6502 out there, but didn't end up
+// implementing here.
 static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
 
 // Unwrap is a bit hacky here but it's done at compile time so should be fine
