@@ -3,10 +3,11 @@ use serde_json;
 use std::collections::HashMap;
 use std::fmt;
 
-static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
-
-lazy_static! {
-    static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
+enum InstructionLength {
+    Zero,
+    OneByte,
+    TwoBytes,
+    Invalid,
 }
 
 #[derive(Clone, Debug)]
@@ -18,6 +19,7 @@ struct OpCode {
 trait OpCodeTrait {
     fn format_instruction_high_byte(&self, low_byte: u8) -> String;
     fn format_instruction_low_and_high_byte(&self, low_byte: u8, high_byte: u8) -> String;
+    fn get_intruction_byte_length(&self) -> InstructionLength;
 }
 
 impl OpCodeTrait for OpCode {
@@ -30,6 +32,25 @@ impl OpCodeTrait for OpCode {
         self.instructions
             .replace("hh", &format!("{:02x}", high_byte))
             .replace("ll", &format!("{:02x}", low_byte))
+    }
+
+    fn get_intruction_byte_length(&self) -> InstructionLength {
+        let mut len = 0;
+
+        if self.instructions.contains("hh") {
+            len += 1;
+        }
+
+        if self.instructions.contains("ll") {
+            len += 1;
+        }
+
+        match len {
+            0 => InstructionLength::Zero,
+            1 => InstructionLength::OneByte,
+            2 => InstructionLength::TwoBytes,
+            _ => InstructionLength::Invalid,
+        }
     }
 }
 
@@ -55,6 +76,12 @@ impl fmt::Display for Disassembly {
             &self.instructions
         )
     }
+}
+
+static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
+
+lazy_static! {
+    static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
 }
 
 fn get_json_content() -> serde_json::Value {
@@ -104,21 +131,10 @@ pub fn disassemble(
 
         match possible_opcode {
             Some(opcode) => {
-                let code = &opcode.instructions;
-                let mut instructions_len = 0;
+                let instruction_length = opcode.get_intruction_byte_length();
 
-                if code.contains("hh") {
-                    instructions_len += 1;
-                    pc += 1;
-                }
-
-                if code.contains("ll") {
-                    instructions_len += 1;
-                    pc += 1;
-                }
-
-                match instructions_len {
-                    0 => {
+                match instruction_length {
+                    InstructionLength::Zero => {
                         let out = Disassembly {
                             instructions: opcode.instructions.to_string(),
                             bytes_used: vec![start_byte],
@@ -127,7 +143,9 @@ pub fn disassemble(
 
                         disassembly.push(out);
                     }
-                    1 => {
+                    InstructionLength::OneByte => {
+                        pc += 1;
+
                         let high_byte = data[pc];
                         let is_relative = opcode.is_relative.unwrap_or(false);
 
@@ -145,6 +163,7 @@ pub fn disassemble(
                             let signed_offset = high_byte as i8;
                             let target_address = pc as i16 + 1 + signed_offset as i16;
 
+                            // A bit messy here...
                             let instr = opcode
                                 .instructions
                                 .replace("hh", &format!("{:02x}", target_address));
@@ -158,23 +177,22 @@ pub fn disassemble(
                             };
 
                             disassembly.push(out);
-                            pc += 1; // Move past the operand for the next iteration
-                            continue;
+                        } else {
+                            let instr = opcode.format_instruction_high_byte(high_byte);
+
+                            let bytes_used = vec![start_byte, high_byte];
+
+                            let out = Disassembly {
+                                instructions: instr,
+                                bytes_used,
+                                start_address,
+                            };
+
+                            disassembly.push(out);
                         }
-
-                        let instr = opcode.format_instruction_high_byte(high_byte);
-
-                        let bytes_used = vec![start_byte, high_byte];
-
-                        let out = Disassembly {
-                            instructions: instr,
-                            bytes_used,
-                            start_address,
-                        };
-
-                        disassembly.push(out);
                     }
-                    2 => {
+                    InstructionLength::TwoBytes => {
+                        pc += 2;
                         let low_byte = data[pc - 1];
                         let high_byte = data[pc];
 
@@ -192,9 +210,12 @@ pub fn disassemble(
                         disassembly.push(out);
                     }
                     // Should never happen, but just in case
-                    _ => return Err("Invalid instruction length".to_string()),
+                    InstructionLength::Invalid => {
+                        return Err("Invalid instruction length".to_string())
+                    }
                 }
             }
+
             None => {
                 // We're dealing with an unknown opcode
                 let out = Disassembly {
@@ -207,6 +228,7 @@ pub fn disassemble(
             }
         }
 
+        // Finally, increment the program counter
         pc += 1;
     }
 
