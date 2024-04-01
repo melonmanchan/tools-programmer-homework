@@ -7,7 +7,6 @@ enum InstructionLength {
     Zero,
     OneByte,
     TwoBytes,
-    Invalid,
 }
 
 #[derive(Clone, Debug)]
@@ -22,6 +21,8 @@ trait OpCodeTrait {
     fn get_intruction_byte_length(&self) -> InstructionLength;
 }
 
+// These string replacements and "contains" aren't the most efficient way of doing this
+// but it's fine for now!
 impl OpCodeTrait for OpCode {
     fn format_instruction_high_byte(&self, low_byte: u8) -> String {
         self.instructions
@@ -35,21 +36,10 @@ impl OpCodeTrait for OpCode {
     }
 
     fn get_intruction_byte_length(&self) -> InstructionLength {
-        let mut len = 0;
-
-        if self.instructions.contains("hh") {
-            len += 1;
-        }
-
-        if self.instructions.contains("ll") {
-            len += 1;
-        }
-
-        match len {
-            0 => InstructionLength::Zero,
-            1 => InstructionLength::OneByte,
-            2 => InstructionLength::TwoBytes,
-            _ => InstructionLength::Invalid,
+        match self.instructions.as_str() {
+            instr if instr.contains("hh") && instr.contains("ll") => InstructionLength::TwoBytes,
+            instr if instr.contains("hh") || instr.contains("ll") => InstructionLength::OneByte,
+            _ => InstructionLength::Zero,
         }
     }
 }
@@ -63,31 +53,34 @@ pub struct Disassembly {
 
 impl fmt::Display for Disassembly {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let hex_bytes = self
+            .bytes_used
+            .iter()
+            .map(|byte| format!("{:02x}", byte))
+            .collect::<Vec<_>>()
+            .join(" ");
+
         write!(
             f,
             "0x{:04X} {} {}",
-            &self.start_address,
-            &self
-                .bytes_used
-                .iter()
-                .map(|byte| format!("{:02x}", byte))
-                .collect::<Vec<_>>()
-                .join(" "),
-            &self.instructions
+            self.start_address, hex_bytes, self.instructions
         )
     }
 }
 
+// This handy opcode file came from https://www.awsm.de/blog/pydisass/
 static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
 
-lazy_static! {
-    static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
-}
-
+// Unwrap is a bit hacky here but it's done at compile time so should be fine
 fn get_json_content() -> serde_json::Value {
     let as_json = serde_json::from_str(&OPCODE_FILE).unwrap();
 
     as_json
+}
+
+// Lazily create the hashmap required for looking up opcodes
+lazy_static! {
+    static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
 }
 
 fn create_instruction_map() -> HashMap<u8, OpCode> {
@@ -149,15 +142,6 @@ pub fn disassemble(
                         let high_byte = data[program_counter];
                         let is_relative = opcode.is_relative.unwrap_or(false);
 
-                        /*
-                                             * Relative
-
-                        *Relative addressing on the 6502 is only used for branch operations. The byte after the opcode is
-                        *the branch offset. If the branch is taken, the new address will the the current PC plus the offset.
-                        *The offset is a signed byte, so it can jump a maximum of 127 bytes forward, or 128 bytes backward.
-                        *(For more info about signed numbers, check here.)
-                        */
-
                         if is_relative {
                             // Thanks chatgpt for this... Fucking off by ones
                             let signed_offset = high_byte as i8;
@@ -209,10 +193,8 @@ pub fn disassemble(
 
                         disassembly.push(out);
                     }
-                    // Should never happen, but just in case
-                    InstructionLength::Invalid => {
-                        return Err("Invalid instruction length".to_string())
-                    }
+                    // Should never happen, but let's leave it here to demonstrate
+                    _ => return Err("Invalid instruction length".to_string()),
                 }
             }
 
