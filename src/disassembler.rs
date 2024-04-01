@@ -3,11 +3,13 @@ use std::result::Result;
 mod bin6502;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// Instead of using a String here it might be to use a custom error type
+// Instead of using a String here it might be to use a custom error type, but I had a headache
+// using Box<Error> with serde_json so let's leave it like this for now
 pub struct Output {
     pub disassembly: Result<Vec<String>, String>,
 }
 
+// Only one binary kind for now, but here's where I would put the rest!
 pub enum BinaryKind {
     Bin6502,
 }
@@ -29,6 +31,7 @@ pub fn disassemble(
 mod tests {
     use super::*;
 
+    // These tests could very well live inside the bin6502.rs file but let's keep them here for now
     #[test]
     fn test_api_disassemble_ok() {
         let data = [0xa9, 0xbd, 0xa0, 0xbd, 0x20, 0x28, 0xba].to_vec();

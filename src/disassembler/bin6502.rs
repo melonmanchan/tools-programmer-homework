@@ -21,7 +21,7 @@ trait OpCodeTrait {
     fn get_intruction_byte_length(&self) -> InstructionLength;
 }
 
-// These string replacements and "contains" aren't the most efficient way of doing this
+// These string replacements and "contains" aren't the most efficient way here
 // but it's fine for now!
 impl OpCodeTrait for OpCode {
     fn format_instruction_high_byte(&self, low_byte: u8) -> String {
@@ -45,7 +45,7 @@ impl OpCodeTrait for OpCode {
 }
 
 #[derive(Debug)]
-pub struct Disassembly {
+struct Disassembly {
     start_address: u16,
     bytes_used: Vec<u8>,
     instructions: String,
@@ -69,6 +69,8 @@ impl fmt::Display for Disassembly {
 }
 
 // This handy opcode file came from https://www.awsm.de/blog/pydisass/
+// in the start the `create_instruction_map` function was a massive mega-imperative pile fo HashMap.insert
+// calls, so I found this nice looking JSON file and decided to use it instead...
 static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
 
 // Unwrap is a bit hacky here but it's done at compile time so should be fine
@@ -106,6 +108,7 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
     hashmap
 }
 
+// This is the main function that will be called from the outside
 pub fn disassemble(
     data: Vec<u8>,
     start_address: Option<u16>,
@@ -116,6 +119,7 @@ pub fn disassemble(
     let mut program_counter = usize::from(start_address.unwrap_or(0));
     let end = usize::from(end_address.unwrap_or(data.len() as u16));
 
+    // I wonder if there's a way to write this using an iterator?
     while program_counter < end {
         let start_address = program_counter as u16;
         let start_byte = data[program_counter];

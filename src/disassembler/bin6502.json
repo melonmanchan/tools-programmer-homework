@@ -324,7 +324,7 @@
     "ins": "LDA $hh,x"
   },
   "B6": {
-    "ins": "LDX $hh,x"
+    "ins": "LDX $hh,y"
   },
   "B8": {
     "ins": "CLV"
@@ -342,7 +342,7 @@
     "ins": "LDA $hhll,x"
   },
   "BE": {
-    "ins": "LDX $hhll,x"
+    "ins": "LDX $hhll,y"
   },
   "C0": {
     "ins": "CPY #$hh"
