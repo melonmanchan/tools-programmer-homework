@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use serde_json;
 use std::collections::HashMap;
+use std::fmt;
 
 static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
 
@@ -19,6 +20,23 @@ pub struct Disassembly {
     start_address: u16,
     bytes_used: Vec<u8>,
     instructions: String,
+}
+
+impl fmt::Display for Disassembly {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "0x{:04X} {} {}",
+            &self.start_address,
+            &self
+                .bytes_used
+                .iter()
+                .map(|byte| format!("{:02x}", byte))
+                .collect::<Vec<_>>()
+                .join(" "),
+            &self.instructions
+        )
+    }
 }
 
 fn get_json_content() -> serde_json::Value {
@@ -181,21 +199,7 @@ pub fn disassemble(
         );
     }
 
-    let output_disassembly = disassembly
-        .iter()
-        .map(|x| {
-            format!(
-                "0x{:04X} {} {}",
-                x.start_address,
-                x.bytes_used
-                    .iter()
-                    .map(|byte| format!("{:02x}", byte))
-                    .collect::<Vec<_>>()
-                    .join(" "),
-                x.instructions
-            )
-        })
-        .collect();
+    let output_disassembly = disassembly.iter().map(|x| x.to_string()).collect();
 
     output_disassembly
 }
