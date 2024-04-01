@@ -3,7 +3,7 @@ mod bin6502;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Output {
-    disassembly: Vec<String>,
+    disassembly: Option<Vec<String>>,
 }
 
 pub enum BinaryKind {
@@ -42,7 +42,7 @@ mod tests {
         ]
         .to_vec();
 
-        assert_eq!(output.disassembly, expected);
+        assert_eq!(output.disassembly.unwrap(), expected);
     }
 
     #[test]
@@ -94,7 +94,7 @@ mod tests {
         ]
         .to_vec();
 
-        assert_eq!(output.disassembly, expected);
+        assert_eq!(output.disassembly.unwrap(), expected);
     }
 
     #[test]
@@ -240,6 +240,6 @@ mod tests {
         ]
         .to_vec();
 
-        assert_eq!(output.disassembly, expected);
+        assert_eq!(output.disassembly.unwrap(), expected);
     }
 }

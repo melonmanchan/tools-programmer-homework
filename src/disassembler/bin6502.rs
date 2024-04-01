@@ -72,7 +72,7 @@ pub fn disassemble(
     data: Vec<u8>,
     start_address: Option<u16>,
     end_address: Option<u16>,
-) -> Vec<String> {
+) -> Option<Vec<String>> {
     let mut disassembly = Vec::new();
 
     let mut pc = usize::from(start_address.unwrap_or(0));
@@ -177,7 +177,8 @@ pub fn disassemble(
 
                         disassembly.push(out);
                     }
-                    _ => panic!("Invalid instruction length"),
+                    // Should never happen, but just in case
+                    _ => return None,
                 }
             }
             None => {
@@ -197,5 +198,5 @@ pub fn disassemble(
 
     let output_disassembly = disassembly.iter().map(|x| x.to_string()).collect();
 
-    output_disassembly
+    Some(output_disassembly)
 }
