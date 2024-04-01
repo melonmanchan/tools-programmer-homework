@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
+use std::result::Result;
 mod bin6502;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Output {
-    disassembly: Option<Vec<String>>,
+    disassembly: Result<Vec<String>, String>,
 }
 
 pub enum BinaryKind {
