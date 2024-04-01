@@ -1,3 +1,4 @@
+use jsonschema::JSONSchema;
 use lazy_static::lazy_static;
 use serde_json;
 use std::collections::HashMap;
@@ -18,7 +19,7 @@ struct OpCode {
 trait OpCodeTrait {
     fn format_instruction_high_byte(&self, low_byte: u8) -> String;
     fn format_instruction_low_and_high_byte(&self, low_byte: u8, high_byte: u8) -> String;
-    fn get_intruction_byte_length(&self) -> InstructionLength;
+    fn get_instruction_byte_length(&self) -> InstructionLength;
 }
 
 // These string replacements and "contains" aren't the most efficient way of doing this
@@ -35,7 +36,7 @@ impl OpCodeTrait for OpCode {
             .replace("ll", &format!("{:02x}", low_byte))
     }
 
-    fn get_intruction_byte_length(&self) -> InstructionLength {
+    fn get_instruction_byte_length(&self) -> InstructionLength {
         match self.instructions.as_str() {
             instr if instr.contains("hh") && instr.contains("ll") => InstructionLength::TwoBytes,
             instr if instr.contains("hh") || instr.contains("ll") => InstructionLength::OneByte,
@@ -70,12 +71,16 @@ impl fmt::Display for Disassembly {
 
 // This handy opcode file came from https://www.awsm.de/blog/pydisass/
 static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
+// I also generated a JSON schema for this file to validate it during build time
+// Might be a bit overkill, but it's generally a good idea to validate JSON files
+static OPCODE_SCHEMA: &'static str = include_str!("./bin6502.schema.json");
 
-// Unwrap is a bit hacky here but it's done at compile time so should be fine
-fn get_json_content() -> serde_json::Value {
-    let as_json = serde_json::from_str(&OPCODE_FILE).unwrap();
+fn get_json_content() -> Result<serde_json::Value, serde_json::Error> {
+    serde_json::from_str(OPCODE_FILE)
+}
 
-    as_json
+fn get_schema_content() -> Result<serde_json::Value, serde_json::Error> {
+    serde_json::from_str(OPCODE_SCHEMA)
 }
 
 // Lazily create the hashmap required for looking up opcodes
@@ -84,7 +89,20 @@ lazy_static! {
 }
 
 fn create_instruction_map() -> HashMap<u8, OpCode> {
-    let json_content = get_json_content();
+    let json_content = get_json_content().unwrap();
+    let schema = get_schema_content().unwrap();
+
+    let compiled_schema = JSONSchema::compile(&schema).unwrap();
+    let result = compiled_schema.validate(&json_content);
+
+    if let Err(errors) = result {
+        for error in errors {
+            println!("Validation error: {}", error);
+            println!("Instance path: {}", error.instance_path);
+        }
+
+        panic!("Invalid JSON schema");
+    }
 
     let hashmap = json_content
         .as_object()
@@ -124,7 +142,7 @@ pub fn disassemble(
 
         match possible_opcode {
             Some(opcode) => {
-                let instruction_length = opcode.get_intruction_byte_length();
+                let instruction_length = opcode.get_instruction_byte_length();
 
                 match instruction_length {
                     InstructionLength::Zero => {
