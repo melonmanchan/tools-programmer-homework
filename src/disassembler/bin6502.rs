@@ -6,13 +6,31 @@ use std::fmt;
 static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
 
 lazy_static! {
-    pub static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
+    static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
 }
 
 #[derive(Clone, Debug)]
-pub struct OpCode {
-    pub instructions: String,
-    pub is_relative: Option<bool>,
+struct OpCode {
+    instructions: String,
+    is_relative: Option<bool>,
+}
+
+trait OpCodeTrait {
+    fn format_instruction_high_byte(&self, low_byte: u8) -> String;
+    fn format_instruction_low_and_high_byte(&self, low_byte: u8, high_byte: u8) -> String;
+}
+
+impl OpCodeTrait for OpCode {
+    fn format_instruction_high_byte(&self, low_byte: u8) -> String {
+        self.instructions
+            .replace("hh", &format!("{:02x}", low_byte))
+    }
+
+    fn format_instruction_low_and_high_byte(&self, low_byte: u8, high_byte: u8) -> String {
+        self.instructions
+            .replace("hh", &format!("{:02x}", high_byte))
+            .replace("ll", &format!("{:02x}", low_byte))
+    }
 }
 
 #[derive(Debug)]
@@ -144,9 +162,7 @@ pub fn disassemble(
                             continue;
                         }
 
-                        let instr = opcode
-                            .instructions
-                            .replace("hh", &format!("{:02x}", high_byte));
+                        let instr = opcode.format_instruction_high_byte(high_byte);
 
                         let bytes_used = vec![start_byte, high_byte];
 
@@ -162,10 +178,8 @@ pub fn disassemble(
                         let low_byte = data[pc - 1];
                         let high_byte = data[pc];
 
-                        let instr = opcode
-                            .instructions
-                            .replace("hh", &format!("{:02x}", high_byte))
-                            .replace("ll", &format!("{:02x}", low_byte));
+                        let instr =
+                            opcode.format_instruction_low_and_high_byte(low_byte, high_byte);
 
                         let bytes_used = vec![start_byte, low_byte, high_byte];
 

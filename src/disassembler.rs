@@ -3,6 +3,7 @@ use std::result::Result;
 mod bin6502;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+// Instead of using a String here it might be to use a custom error type
 pub struct Output {
     pub disassembly: Result<Vec<String>, String>,
 }
