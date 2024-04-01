@@ -120,12 +120,12 @@ pub fn disassemble(
 ) -> Result<Vec<String>, String> {
     let mut disassembly = Vec::new();
 
-    let mut pc = usize::from(start_address.unwrap_or(0));
+    let mut program_counter = usize::from(start_address.unwrap_or(0));
     let end = usize::from(end_address.unwrap_or(data.len() as u16));
 
-    while pc < end {
-        let start_address = pc as u16;
-        let start_byte = data[pc];
+    while program_counter < end {
+        let start_address = program_counter as u16;
+        let start_byte = data[program_counter];
 
         let possible_opcode = INSTRUCTION_MAP.get(&start_byte);
 
@@ -144,9 +144,9 @@ pub fn disassemble(
                         disassembly.push(out);
                     }
                     InstructionLength::OneByte => {
-                        pc += 1;
+                        program_counter += 1;
 
-                        let high_byte = data[pc];
+                        let high_byte = data[program_counter];
                         let is_relative = opcode.is_relative.unwrap_or(false);
 
                         /*
@@ -161,7 +161,7 @@ pub fn disassemble(
                         if is_relative {
                             // Thanks chatgpt for this... Fucking off by ones
                             let signed_offset = high_byte as i8;
-                            let target_address = pc as i16 + 1 + signed_offset as i16;
+                            let target_address = program_counter as i16 + 1 + signed_offset as i16;
 
                             // A bit messy here...
                             let instr = opcode
@@ -192,9 +192,9 @@ pub fn disassemble(
                         }
                     }
                     InstructionLength::TwoBytes => {
-                        pc += 2;
-                        let low_byte = data[pc - 1];
-                        let high_byte = data[pc];
+                        program_counter += 2;
+                        let low_byte = data[program_counter - 1];
+                        let high_byte = data[program_counter];
 
                         let instr =
                             opcode.format_instruction_low_and_high_byte(low_byte, high_byte);
@@ -229,7 +229,7 @@ pub fn disassemble(
         }
 
         // Finally, increment the program counter
-        pc += 1;
+        program_counter += 1;
     }
 
     let output_disassembly = disassembly.iter().map(|x| x.to_string()).collect();
