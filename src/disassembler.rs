@@ -4,7 +4,7 @@ mod bin6502;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Output {
-    disassembly: Result<Vec<String>, String>,
+    pub disassembly: Result<Vec<String>, String>,
 }
 
 pub enum BinaryKind {
