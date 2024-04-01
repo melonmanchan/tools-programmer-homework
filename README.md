@@ -44,16 +44,7 @@ If you can provide some initial code and are prepared to explain your implementa
 
 Don't hesitate to use pseudocode in places where you feel a lot of boilerplate or obvious implementations are required.
 
-# Sources
-
-https://www.masswerk.at/6502/disassembler.html
-https://www.youtube.com/watch?v=mR1G9ZA2UfQ
-https://www.awsm.de/blog/pydisass/
-https://6502disassembly.com/on-disassembly.html
-https://codeburst.io/an-introduction-to-6502-assembly-and-low-level-programming-7c11fa6b9cb9
-https://skilldrick.github.io/easy6502/
-
-Pasting shit to and from chatGPT :call_me:
+# My notes
 
 ## Major things I left out
 
@@ -81,3 +72,14 @@ quite the endeavor, but here's some things I would probably try out first
 But yeah it's tricky! To alleviate the problem I'm allowing the user to provide
 the start and end address of the data they want to disassemble. This way they
 can just disassemble the code section and then the data section separately.
+
+## Sources
+
+https://www.masswerk.at/6502/disassembler.html
+https://www.youtube.com/watch?v=mR1G9ZA2UfQ
+https://www.awsm.de/blog/pydisass/
+https://6502disassembly.com/on-disassembly.html
+https://codeburst.io/an-introduction-to-6502-assembly-and-low-level-programming-7c11fa6b9cb9
+https://skilldrick.github.io/easy6502/
+
+Pasting shit to and from chatGPT :call_me:
