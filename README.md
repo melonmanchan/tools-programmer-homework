@@ -73,6 +73,12 @@ But yeah it's tricky! To alleviate the problem I'm allowing the user to provide
 the start and end address of the data they want to disassemble. This way they
 can just disassemble the code section and then the data section separately.
 
+## Other notes
+
+There's a branch with JSON schema validation included for validating the opcode files,
+but I left that out of `main` since after writing it feels a bit overkill to be honest, since
+we're using rust, not shitty dynamic language. Just the web plebeian in me!
+
 ## Sources
 
 https://www.masswerk.at/6502/disassembler.html
