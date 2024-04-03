@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-use serde_json;
+
 use std::collections::HashMap;
 use std::fmt;
 
@@ -76,13 +76,13 @@ impl fmt::Display for Disassembly {
 // Initially I had an idea that the caller could pass in their custom illegal opcode map in the
 // request payload since there's seemingly so many flavors of 6502 out there, but didn't end up
 // implementing here.
-static OPCODE_FILE: &'static str = include_str!("./bin6502.json");
+static OPCODE_FILE: &str = include_str!("./bin6502.json");
 
 // Unwrap is a bit hacky here but it's done at compile time so should be fine
 fn get_json_content() -> serde_json::Value {
-    let as_json = serde_json::from_str(&OPCODE_FILE).unwrap();
+    
 
-    as_json
+    serde_json::from_str(OPCODE_FILE).unwrap()
 }
 
 // Lazily create the hashmap required for looking up opcodes

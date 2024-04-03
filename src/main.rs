@@ -88,7 +88,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_invalid_start() {
-        const URL: &'static str = "http://localhost:9999/";
+        const URL: &str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
@@ -116,7 +116,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_invalid_end() {
-        const URL: &'static str = "http://localhost:9999/";
+        const URL: &str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
