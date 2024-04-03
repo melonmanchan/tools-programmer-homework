@@ -80,8 +80,6 @@ static OPCODE_FILE: &str = include_str!("./bin6502.json");
 
 // Unwrap is a bit hacky here but it's done at compile time so should be fine
 fn get_json_content() -> serde_json::Value {
-    
-
     serde_json::from_str(OPCODE_FILE).unwrap()
 }
 
@@ -202,8 +200,6 @@ pub fn disassemble(
 
                         disassembly.push(out);
                     }
-                    // Should never happen, but let's leave it here to demonstrate
-                    _ => return Err("Invalid instruction length".to_string()),
                 }
             }
 
