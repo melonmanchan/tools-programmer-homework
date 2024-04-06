@@ -1,8 +1,20 @@
+use std::sync::Once;
+
 use tools_programmer_homework::{Error, Payload};
 
+static TEST_PORT: u16 = 9998;
+static URL: &str = "http://localhost:9998/";
+
+// Nifty way of ensuring we're only starting our test server once
+static SPAWN_APP: Once = Once::new();
+
 fn spawn_app() {
-    let server = tools_programmer_homework::run();
-    let _ = tokio::spawn(server);
+    SPAWN_APP.call_once(|| {
+        println!("Starting test server");
+        let server = tools_programmer_homework::run(TEST_PORT);
+
+        let _ = tokio::spawn(server);
+    });
 }
 
 #[cfg(test)]
@@ -12,7 +24,6 @@ mod tests {
     async fn test_invalid_start() {
         spawn_app();
 
-        const URL: &str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
@@ -41,7 +52,7 @@ mod tests {
     #[tokio::test]
     async fn test_invalid_end() {
         spawn_app();
-        const URL: &str = "http://localhost:9999/";
+
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
