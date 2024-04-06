@@ -87,8 +87,6 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
     // implementing here.
     static OPCODE_FILE: &str = include_str!("./bin6502.json");
 
-    
-
     serde_json::from_str::<HashMap<String, OpCode>>(OPCODE_FILE)
         .expect("Expected instruction map to match schema")
         .into_iter()
@@ -114,85 +112,82 @@ pub fn disassemble(
 
         let possible_opcode = INSTRUCTION_MAP.get(&start_byte);
 
-        match possible_opcode {
-            Some(opcode) => {
-                let instruction_length = opcode.get_intruction_byte_length();
+        // We're dealing with an unknown opcode, add to disassembly, increment program counter and continue
+        let Some(opcode) = possible_opcode else {
+            let out = Disassembly {
+                instructions: "???".to_string(),
+                bytes_used: vec![start_byte],
+                start_address,
+            };
 
-                match instruction_length {
-                    InstructionArgumentLength::Zero => {
-                        let out = Disassembly {
-                            instructions: opcode.instructions.to_string(),
-                            bytes_used: vec![start_byte],
-                            start_address,
-                        };
+            disassembly.push(out);
+            program_counter += 1;
+            continue;
+        };
 
-                        disassembly.push(out);
-                    }
-                    InstructionArgumentLength::OneByte => {
-                        program_counter += 1;
+        let instruction_length = opcode.get_intruction_byte_length();
 
-                        let high_byte = data[program_counter];
-                        let is_relative = opcode.is_relative.unwrap_or(false);
+        match instruction_length {
+            InstructionArgumentLength::Zero => {
+                let out = Disassembly {
+                    instructions: opcode.instructions.to_string(),
+                    bytes_used: vec![start_byte],
+                    start_address,
+                };
 
-                        if is_relative {
-                            // Thanks chatgpt for this... Fucking off by ones
-                            let signed_offset = high_byte as i8;
-                            let target_address = program_counter as i16 + 1 + signed_offset as i16;
+                disassembly.push(out);
+            }
+            InstructionArgumentLength::OneByte => {
+                program_counter += 1;
 
-                            // A bit messy here...
-                            let instr = opcode
-                                .instructions
-                                .replace("hh", &format!("{:02x}", target_address));
+                let high_byte = data[program_counter];
+                let is_relative = opcode.is_relative.unwrap_or(false);
 
-                            let bytes_used = vec![start_byte, high_byte];
+                if is_relative {
+                    // Thanks chatgpt for this... Fucking off by ones
+                    let signed_offset = high_byte as i8;
+                    let target_address = program_counter as i16 + 1 + signed_offset as i16;
 
-                            let out = Disassembly {
-                                instructions: instr,
-                                bytes_used,
-                                start_address,
-                            };
+                    // A bit messy here...
+                    let instr = opcode
+                        .instructions
+                        .replace("hh", &format!("{:02x}", target_address));
 
-                            disassembly.push(out);
-                        } else {
-                            let instr = opcode.format_instruction_high_byte(high_byte);
+                    let bytes_used = vec![start_byte, high_byte];
 
-                            let bytes_used = vec![start_byte, high_byte];
+                    let out = Disassembly {
+                        instructions: instr,
+                        bytes_used,
+                        start_address,
+                    };
 
-                            let out = Disassembly {
-                                instructions: instr,
-                                bytes_used,
-                                start_address,
-                            };
+                    disassembly.push(out);
+                } else {
+                    let instr = opcode.format_instruction_high_byte(high_byte);
 
-                            disassembly.push(out);
-                        }
-                    }
-                    InstructionArgumentLength::TwoBytes => {
-                        program_counter += 2;
-                        let low_byte = data[program_counter - 1];
-                        let high_byte = data[program_counter];
+                    let bytes_used = vec![start_byte, high_byte];
 
-                        let instr =
-                            opcode.format_instruction_low_and_high_byte(low_byte, high_byte);
+                    let out = Disassembly {
+                        instructions: instr,
+                        bytes_used,
+                        start_address,
+                    };
 
-                        let bytes_used = vec![start_byte, low_byte, high_byte];
-
-                        let out = Disassembly {
-                            instructions: instr,
-                            bytes_used,
-                            start_address,
-                        };
-
-                        disassembly.push(out);
-                    }
+                    disassembly.push(out);
                 }
             }
+            InstructionArgumentLength::TwoBytes => {
+                program_counter += 2;
+                let low_byte = data[program_counter - 1];
+                let high_byte = data[program_counter];
 
-            None => {
-                // We're dealing with an unknown opcode
+                let instr = opcode.format_instruction_low_and_high_byte(low_byte, high_byte);
+
+                let bytes_used = vec![start_byte, low_byte, high_byte];
+
                 let out = Disassembly {
-                    instructions: "???".to_string(),
-                    bytes_used: vec![start_byte],
+                    instructions: instr,
+                    bytes_used,
                     start_address,
                 };
 
@@ -200,7 +195,7 @@ pub fn disassemble(
             }
         }
 
-        // Finally, increment the program counter
+        // Finally, increment the program counter by one
         program_counter += 1;
     }
 
