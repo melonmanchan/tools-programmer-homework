@@ -1,10 +1,17 @@
 use tools_programmer_homework::{Error, Payload};
 
+fn spawn_app() {
+    let server = tools_programmer_homework::run();
+    let _ = tokio::spawn(server);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     #[tokio::test]
     async fn test_invalid_start() {
+        spawn_app();
+
         const URL: &str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
@@ -33,6 +40,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_invalid_end() {
+        spawn_app();
         const URL: &str = "http://localhost:9999/";
         let client = reqwest::Client::builder().build().unwrap();
 
