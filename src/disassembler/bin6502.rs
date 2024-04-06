@@ -3,7 +3,7 @@ use lazy_static::lazy_static;
 use std::collections::HashMap;
 use std::fmt;
 
-enum InstructionLength {
+enum InstructionArgumentLength {
     Zero,
     OneByte,
     TwoBytes,
@@ -15,15 +15,9 @@ struct OpCode {
     is_relative: Option<bool>,
 }
 
-trait OpCodeTrait {
-    fn format_instruction_high_byte(&self, low_byte: u8) -> String;
-    fn format_instruction_low_and_high_byte(&self, low_byte: u8, high_byte: u8) -> String;
-    fn get_intruction_byte_length(&self) -> InstructionLength;
-}
-
 // These string replacements and "contains" aren't the most efficient way here
 // but it's fine for now!
-impl OpCodeTrait for OpCode {
+impl OpCode {
     fn format_instruction_high_byte(&self, low_byte: u8) -> String {
         self.instructions
             .replace("hh", &format!("{:02x}", low_byte))
@@ -35,11 +29,15 @@ impl OpCodeTrait for OpCode {
             .replace("ll", &format!("{:02x}", low_byte))
     }
 
-    fn get_intruction_byte_length(&self) -> InstructionLength {
+    fn get_intruction_byte_length(&self) -> InstructionArgumentLength {
         match self.instructions.as_str() {
-            instr if instr.contains("hh") && instr.contains("ll") => InstructionLength::TwoBytes,
-            instr if instr.contains("hh") || instr.contains("ll") => InstructionLength::OneByte,
-            _ => InstructionLength::Zero,
+            instr if instr.contains("hh") && instr.contains("ll") => {
+                InstructionArgumentLength::TwoBytes
+            }
+            instr if instr.contains("hh") || instr.contains("ll") => {
+                InstructionArgumentLength::OneByte
+            }
+            _ => InstructionArgumentLength::Zero,
         }
     }
 }
@@ -68,27 +66,27 @@ impl fmt::Display for Disassembly {
     }
 }
 
-// This handy opcode file came from https://www.awsm.de/blog/pydisass/ in the start the
-// `create_instruction_map` function was a massive mega-imperative pile fo HashMap.insert calls, so
-// I found this nice looking JSON file and decided to use it as a base for my own instead, even
-// though I had to fix some typos and double-check it against the offical reference
-//
-// Initially I had an idea that the caller could pass in their custom illegal opcode map in the
-// request payload since there's seemingly so many flavors of 6502 out there, but didn't end up
-// implementing here.
-static OPCODE_FILE: &str = include_str!("./bin6502.json");
-
-// Unwrap is a bit hacky here but it's done at compile time so should be fine
-fn get_json_content() -> serde_json::Value {
-    serde_json::from_str(OPCODE_FILE).unwrap()
-}
-
 // Lazily create the hashmap required for looking up opcodes
 lazy_static! {
     static ref INSTRUCTION_MAP: HashMap<u8, OpCode> = create_instruction_map();
 }
 
 fn create_instruction_map() -> HashMap<u8, OpCode> {
+    // This handy opcode file came from https://www.awsm.de/blog/pydisass/ in the start the
+    // `create_instruction_map` function was a massive mega-imperative pile fo HashMap.insert calls, so
+    // I found this nice looking JSON file and decided to use it as a base for my own instead, even
+    // though I had to fix some typos and double-check it against the offical reference
+    //
+    // Initially I had an idea that the caller could pass in their custom illegal opcode map in the
+    // request payload since there's seemingly so many flavors of 6502 out there, but didn't end up
+    // implementing here.
+    static OPCODE_FILE: &str = include_str!("./bin6502.json");
+
+    // Unwrap is a bit hacky here but we control the input so it's fine for now!
+    fn get_json_content() -> serde_json::Value {
+        serde_json::from_str(OPCODE_FILE).unwrap()
+    }
+
     let json_content = get_json_content();
 
     let hashmap = json_content
@@ -134,7 +132,7 @@ pub fn disassemble(
                 let instruction_length = opcode.get_intruction_byte_length();
 
                 match instruction_length {
-                    InstructionLength::Zero => {
+                    InstructionArgumentLength::Zero => {
                         let out = Disassembly {
                             instructions: opcode.instructions.to_string(),
                             bytes_used: vec![start_byte],
@@ -143,7 +141,7 @@ pub fn disassemble(
 
                         disassembly.push(out);
                     }
-                    InstructionLength::OneByte => {
+                    InstructionArgumentLength::OneByte => {
                         program_counter += 1;
 
                         let high_byte = data[program_counter];
@@ -182,7 +180,7 @@ pub fn disassemble(
                             disassembly.push(out);
                         }
                     }
-                    InstructionLength::TwoBytes => {
+                    InstructionArgumentLength::TwoBytes => {
                         program_counter += 2;
                         let low_byte = data[program_counter - 1];
                         let high_byte = data[program_counter];
