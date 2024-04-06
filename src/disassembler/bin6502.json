@@ -1,7 +1,7 @@
 {
   "10": {
     "ins": "BPL $hh",
-    "rel": 1
+    "rel": true
   },
   "11": {
     "ins": "ORA ($hh),y"
@@ -41,7 +41,7 @@
   },
   "30": {
     "ins": "BMI $hh",
-    "rel": 1
+    "rel": true
   },
   "31": {
     "ins": "AND ($hh),y"
@@ -78,7 +78,7 @@
   },
   "50": {
     "ins": "BVC $hh",
-    "rel": 1
+    "rel": true
   },
   "51": {
     "ins": "EOR ($hh),y"
@@ -115,7 +115,7 @@
   },
   "70": {
     "ins": "BVS $hh",
-    "rel": 1
+    "rel": true
   },
   "71": {
     "ins": "ADC ($hh),y"
@@ -149,7 +149,7 @@
   },
   "90": {
     "ins": "BCC $hh",
-    "rel": 1
+    "rel": true
   },
   "91": {
     "ins": "STA ($hh),y"
@@ -312,7 +312,7 @@
   },
   "B0": {
     "ins": "BCS $hh",
-    "rel": 1
+    "rel": true
   },
   "B1": {
     "ins": "LDA ($hh),y"
@@ -379,7 +379,7 @@
   },
   "D0": {
     "ins": "BNE $hh",
-    "rel": 1
+    "rel": true
   },
   "D1": {
     "ins": "CMP ($hh),y"
@@ -437,7 +437,7 @@
   },
   "F0": {
     "ins": "BEQ $hh",
-    "rel": 1
+    "rel": true
   },
   "F1": {
     "ins": "SBC ($hh),y"

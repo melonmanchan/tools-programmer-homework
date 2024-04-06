@@ -1,4 +1,5 @@
 use lazy_static::lazy_static;
+use serde::Deserialize;
 
 use std::collections::HashMap;
 use std::fmt;
@@ -9,9 +10,12 @@ enum InstructionArgumentLength {
     TwoBytes,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize)]
 struct OpCode {
+    #[serde(rename = "ins")]
     instructions: String,
+
+    #[serde(rename = "rel")]
     is_relative: Option<bool>,
 }
 
@@ -72,38 +76,21 @@ lazy_static! {
 }
 
 fn create_instruction_map() -> HashMap<u8, OpCode> {
-    // This handy opcode file came from https://www.awsm.de/blog/pydisass/ in the start the
+    // This handy opcode file came from https://www.awsm.de/blog/pydisass/
+    // in the beginnin the
     // `create_instruction_map` function was a massive mega-imperative pile fo HashMap.insert calls, so
     // I found this nice looking JSON file and decided to use it as a base for my own instead, even
-    // though I had to fix some typos and double-check it against the offical reference
+    // though I had to fix some typos and double-check it against the official reference
     //
     // Initially I had an idea that the caller could pass in their custom illegal opcode map in the
     // request payload since there's seemingly so many flavors of 6502 out there, but didn't end up
     // implementing here.
     static OPCODE_FILE: &str = include_str!("./bin6502.json");
 
-    // Unwrap is a bit hacky here but we control the input so it's fine for now!
-    fn get_json_content() -> serde_json::Value {
-        serde_json::from_str(OPCODE_FILE).unwrap()
-    }
-
-    let json_content = get_json_content();
-
-    let hashmap = json_content
-        .as_object()
-        .unwrap()
-        .iter()
-        .map(|(key, value)| {
-            let instructions = value["ins"].as_str().unwrap();
-            let is_relative = value["rel"].as_u64();
-
-            let opcode = OpCode {
-                instructions: instructions.to_string(),
-                is_relative: is_relative.map(|x| x == 1),
-            };
-
-            (u8::from_str_radix(key, 16).unwrap(), opcode)
-        })
+    let hashmap = serde_json::from_str::<HashMap<String, OpCode>>(OPCODE_FILE)
+        .expect("Expected instruction map to match schema")
+        .into_iter()
+        .map(|(key, opcode)| (u8::from_str_radix(&key, 16).unwrap(), opcode))
         .collect();
 
     hashmap
