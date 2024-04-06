@@ -145,10 +145,15 @@ pub fn disassemble(
 
                 if is_relative {
                     // Thanks chatgpt for this... Fucking off by ones
+                    // convert to signed since the offset is between -128 to 127
                     let signed_offset = high_byte as i8;
-                    let target_address = program_counter as i16 + 1 + signed_offset as i16;
 
                     // A bit messy here...
+                    // calcutate the actual address we want to jump to here, casting to i16 to
+                    // prevent any overflows
+                    // + 1 because we want the next instruction...
+                    let target_address = program_counter as i16 + 1 + signed_offset as i16;
+
                     let instr = opcode
                         .instructions
                         .replace("hh", &format!("{:02x}", target_address));
