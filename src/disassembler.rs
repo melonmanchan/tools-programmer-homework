@@ -34,18 +34,17 @@ mod tests {
     // These tests could very well live inside the bin6502.rs file but let's keep them here for now
     #[test]
     fn test_api_disassemble_ok() {
-        let data = [0xa9, 0xbd, 0xa0, 0xbd, 0x20, 0x28, 0xba].to_vec();
+        let data = vec![0xa9, 0xbd, 0xa0, 0xbd, 0x20, 0x28, 0xba];
         let start_address = Some(0x0000);
         let end_address = None;
 
         let output = disassemble(data, start_address, end_address, BinaryKind::Bin6502);
 
-        let expected = [
+        let expected = vec![
             "0x0000 a9 bd LDA #$bd",
             "0x0002 a0 bd LDY #$bd",
             "0x0004 20 28 ba JSR $ba28",
-        ]
-        .to_vec();
+        ];
 
         assert_eq!(output.disassembly.unwrap(), expected);
     }
@@ -58,7 +57,7 @@ mod tests {
         let output = disassemble(data, start_address, end_address, BinaryKind::Bin6502);
 
         // Stolen from https://www.masswerk.at/6502/disassembler.html
-        let expected = [
+        let expected = vec![
             "0x0000 48 PHA",
             "0x0001 e7 ???",
             "0x0002 20 20 70 JSR $7020",
@@ -96,8 +95,7 @@ mod tests {
             "0x0032 00 BRK",
             "0x0033 55 67 EOR $67,x",
             "0x0035 1e 60 38 ASL $3860,x",
-        ]
-        .to_vec();
+        ];
 
         assert_eq!(output.disassembly.unwrap(), expected);
     }
@@ -109,7 +107,7 @@ mod tests {
         let end_address = None;
         let output = disassemble(data, start_address, end_address, BinaryKind::Bin6502);
 
-        let expected = [
+        let expected = vec![
             "0x0000 4e 56 ff LSR $ff56",
             "0x0003 f0 48 BEQ $4d",
             "0x0005 e7 ???",
@@ -242,8 +240,7 @@ mod tests {
             "0x00BB 02 ???",
             "0x00BC 4e fb 00 LSR $00fb",
             "0x00BF 02 ???",
-        ]
-        .to_vec();
+        ];
 
         assert_eq!(output.disassembly.unwrap(), expected);
     }

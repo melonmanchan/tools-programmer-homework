@@ -92,7 +92,7 @@ mod tests {
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
-            data: [0xa9, 0xbd, 0xa0, 0xbd].to_vec(),
+            data: vec![0xa9, 0xbd, 0xa0, 0xbd],
             start_address: Some(5),
             end_address: None,
         };
@@ -120,7 +120,7 @@ mod tests {
         let client = reqwest::Client::builder().build().unwrap();
 
         let payload = Payload {
-            data: [0xa9, 0xbd, 0xa0, 0xbd].to_vec(),
+            data: vec![0xa9, 0xbd, 0xa0, 0xbd],
             start_address: None,
             end_address: Some(5),
         };
