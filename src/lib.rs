@@ -4,6 +4,8 @@ use axum::{
     Json, Router,
 };
 
+
+
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use tracing::info;
@@ -76,13 +78,12 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
 pub async fn run() {
     tracing_subscriber::fmt().init();
 
-    let routes = Router::new().route("/", post(handler));
+    let app = Router::new().route("/", post(handler));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 9999));
     info!("{:<15} - {addr}\n", "LISTENING");
 
-    axum::Server::bind(&addr)
-        .serve(routes.into_make_service())
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+
+    axum::serve(listener, app).await.unwrap();
 }
