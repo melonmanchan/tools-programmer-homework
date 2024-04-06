@@ -3,10 +3,8 @@ use std::result::Result;
 mod bin6502;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// Instead of using a String here it might be to use a custom error type, but I had a headache
-// using Box<Error> with serde_json so let's leave it like this for now
 pub struct Output {
-    pub disassembly: Result<Vec<String>, String>,
+    pub disassembly: Vec<String>,
 }
 
 // Only one binary kind for now, but here's where I would put the rest!
@@ -14,16 +12,23 @@ pub enum BinaryKind {
     Bin6502,
 }
 
+// Instead of using a String here it might be to use a custom error type, but I had a headache
+// using Box<Error> with serde_json so let's leave it like this for now
 pub fn disassemble(
     data: Vec<u8>,
     start_address: Option<u16>,
     end_address: Option<u16>,
     binary_kind: BinaryKind,
-) -> Output {
+) -> Result<Output, String> {
     match binary_kind {
-        BinaryKind::Bin6502 => Output {
-            disassembly: bin6502::disassemble(data, start_address, end_address),
-        },
+        BinaryKind::Bin6502 => {
+            let disassembly = bin6502::disassemble(data, start_address, end_address);
+
+            match disassembly {
+                Ok(disassembly) => Ok(Output { disassembly }),
+                Err(e) => Err(e),
+            }
+        }
     }
 }
 
@@ -46,7 +51,7 @@ mod tests {
             "0x0004 20 28 ba JSR $ba28",
         ];
 
-        assert_eq!(output.disassembly.unwrap(), expected);
+        assert_eq!(output.unwrap().disassembly, expected);
     }
 
     #[test]
@@ -97,7 +102,7 @@ mod tests {
             "0x0035 1e 60 38 ASL $3860,x",
         ];
 
-        assert_eq!(output.disassembly.unwrap(), expected);
+        assert_eq!(output.unwrap().disassembly, expected);
     }
 
     #[test]
@@ -242,6 +247,6 @@ mod tests {
             "0x00BF 02 ???",
         ];
 
-        assert_eq!(output.disassembly.unwrap(), expected);
+        assert_eq!(output.unwrap().disassembly, expected);
     }
 }

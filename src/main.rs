@@ -76,8 +76,12 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
         disassembler::BinaryKind::Bin6502,
     );
 
-    match res.disassembly {
-        Ok(disassembly) => Json(Output { disassembly }).into_response(),
+    match res {
+        Ok(res) => Json(Output {
+            disassembly: res.disassembly,
+        })
+        .into_response(),
+
         Err(e) => Json(Error { message: e }).into_response(),
     }
 }
