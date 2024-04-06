@@ -112,7 +112,7 @@ pub fn disassemble(
 
         let possible_opcode = INSTRUCTION_MAP.get(&start_byte);
 
-        // We're dealing with an unknown opcode, add to disassembly, increment program counter and continue
+        // We're dealing with an unknown opcode, add to disassembly output, increment program counter and continue
         let Some(opcode) = possible_opcode else {
             let out = Disassembly {
                 instructions: "???".to_string(),

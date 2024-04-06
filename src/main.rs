@@ -89,7 +89,7 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    // These could live as integration tests so they could be ran in parallel
     #[tokio::test]
     async fn test_invalid_start() {
         const URL: &str = "http://localhost:9999/";
