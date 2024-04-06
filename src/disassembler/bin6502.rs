@@ -87,13 +87,13 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
     // implementing here.
     static OPCODE_FILE: &str = include_str!("./bin6502.json");
 
-    let hashmap = serde_json::from_str::<HashMap<String, OpCode>>(OPCODE_FILE)
+    
+
+    serde_json::from_str::<HashMap<String, OpCode>>(OPCODE_FILE)
         .expect("Expected instruction map to match schema")
         .into_iter()
         .map(|(key, opcode)| (u8::from_str_radix(&key, 16).unwrap(), opcode))
-        .collect();
-
-    hashmap
+        .collect()
 }
 
 // This is the main function that will be called from the outside
