@@ -15,7 +15,8 @@ pub enum BinaryKind {
 // Instead of using a String here it might be to use a custom error type, but I had a headache
 // using Box<Error> with serde_json so let's leave it like this for now
 pub fn disassemble(
-    data: Vec<u8>,
+    // I think it's more flexible to allow this function to allow a slice instead of a Vec
+    data: &[u8],
     start_address: Option<u16>,
     end_address: Option<u16>,
     binary_kind: BinaryKind,
@@ -34,6 +35,7 @@ pub fn disassemble(
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
 
     // These tests could very well live inside the bin6502.rs file but let's keep them here for now
@@ -43,7 +45,12 @@ mod tests {
         let start_address = Some(0x0000);
         let end_address = None;
 
-        let output = disassemble(data, start_address, end_address, BinaryKind::Bin6502);
+        let output = disassemble(
+            data.as_slice(),
+            start_address,
+            end_address,
+            BinaryKind::Bin6502,
+        );
 
         let expected = vec![
             "0x0000 a9 bd LDA #$bd",
@@ -59,7 +66,12 @@ mod tests {
         let data = std::fs::read("./test-bin/test1.bin").unwrap();
         let start_address = Some(0x0000);
         let end_address = None;
-        let output = disassemble(data, start_address, end_address, BinaryKind::Bin6502);
+        let output = disassemble(
+            data.as_slice(),
+            start_address,
+            end_address,
+            BinaryKind::Bin6502,
+        );
 
         // Stolen from https://www.masswerk.at/6502/disassembler.html
         let expected = vec![
@@ -110,7 +122,12 @@ mod tests {
         let data = std::fs::read("./test-bin/test2.bin").unwrap();
         let start_address = Some(0x0000);
         let end_address = None;
-        let output = disassemble(data, start_address, end_address, BinaryKind::Bin6502);
+        let output = disassemble(
+            data.as_slice(),
+            start_address,
+            end_address,
+            BinaryKind::Bin6502,
+        );
 
         let expected = vec![
             "0x0000 4e 56 ff LSR $ff56",

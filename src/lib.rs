@@ -57,7 +57,7 @@ async fn handler(Json(payload): Json<Payload>) -> Response {
     }
 
     let res = disassembler::disassemble(
-        data,
+        data.as_slice(),
         start_address,
         end_address,
         disassembler::BinaryKind::Bin6502,

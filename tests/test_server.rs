@@ -11,6 +11,7 @@ static SPAWN_APP: Once = Once::new();
 fn spawn_app() {
     SPAWN_APP.call_once(|| {
         println!("Starting test server");
+
         let server = tools_programmer_homework::run(TEST_PORT);
 
         let _ = tokio::spawn(server);

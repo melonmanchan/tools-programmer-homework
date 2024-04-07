@@ -96,7 +96,7 @@ fn create_instruction_map() -> HashMap<u8, OpCode> {
 
 // This is the main function that will be called from the outside
 pub fn disassemble(
-    data: Vec<u8>,
+    data: &[u8],
     start_address: Option<u16>,
     end_address: Option<u16>,
 ) -> Result<Vec<String>, String> {
