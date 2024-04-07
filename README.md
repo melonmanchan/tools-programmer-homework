@@ -51,6 +51,9 @@ assembly before and first I was a bit scared at first but it turned out to be
 more pleasant of an exercise than I thought, honestly. Writing rust is real
 refreshing after years of Typescript...
 
+You can run the tests by just running `cargo test`, it automatically starts the
+test server, no need to run `cargo run` first.
+
 ## Major things I left out
 
 I didn't bother adding labels, I had enough of looking at the disassemble
